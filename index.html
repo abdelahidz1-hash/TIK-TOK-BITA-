@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بوت الزخرفة الشامل</title>
+<title>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -16,100 +16,219 @@
     --text: #f0f0ff;
     --muted: #6666aa;
     --bot-bubble: #14142a;
-    --user-bubble: linear-gradient(135deg, #ff5c00, #ff8c42);
+    --user-bubble: transparent;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+  [data-theme="light"] {
+    --bg: #f5f5f7;
+    --surface: #ffffff;
+    --card: #ffffff;
+    --border: #e0e0e0;
+    --text: #1d1d1f;
+    --muted: #86868b;
+    --bot-bubble: #e9e9eb;
+  }
 
-  .header { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--border); position: relative; z-index: 10; }
-  .avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), var(--orange2)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-  .name { font-weight: 900; }
+  * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
+  body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
-  .chat { flex: 1; overflow-y: auto; padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth; }
-  .row { display: flex; align-items: flex-end; gap: 8px; animation: popIn .25s ease both; }
-  @keyframes popIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 1001; }
+  .header-info { display: flex; align-items: center; gap: 14px; }
+  
+  .name { 
+    font-weight: 900; font-size: 1.2rem; letter-spacing: 1px; 
+    background: linear-gradient(to right, #ff5c00, #ff00fb, #007BFF, #2ECC71, #ff5c00);
+    background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: rainbow-move 3s linear infinite;
+  }
+  @keyframes rainbow-move { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+  .avatar {
+    width: 48px; height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, #2a2a40, #1a1a2e);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); overflow: hidden;
+    cursor: pointer; border: 2px solid var(--orange); transition: 0.3s;
+  }
+  .avatar:hover { transform: scale(1.1); }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .theme-switch-wrapper { display: flex; align-items: center; }
+  .theme-switch { display: inline-block; height: 32px; position: relative; width: 60px; cursor: pointer; }
+  .theme-switch input { display: none; }
+  .slider { background-color: var(--card); border: 2px solid var(--border); bottom: 0; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 34px; }
+  .slider:before { background-color: #fff; bottom: 2px; content: ""; height: 24px; right: 2px; position: absolute; transition: .4s; width: 24px; border-radius: 50%; }
+  input:checked + .slider { background-color: var(--orange); }
+  input:checked + .slider:before { transform: translateX(-28px); }
+
+  .chat { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
+  .row { display: flex; align-items: flex-end; gap: 10px; animation: popIn .3s ease-out both; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
   .row.bot { flex-direction: row; }
   .row.user { flex-direction: row-reverse; }
+  .bubble { max-width: 90%; padding: 14px 18px; border-radius: 20px; font-size: .95rem; line-height: 1.6; }
+  .row.bot .bubble { background: var(--bot-bubble); border: 1px solid var(--border); color: var(--text); }
+  .row.user .bubble { background: var(--user-bubble); color: var(--text); font-weight: 700; }
 
-  .bubble { max-width: 85%; padding: 12px 16px; border-radius: 18px; font-size: .95rem; line-height: 1.6; }
-  .row.bot .bubble { background: var(--bot-bubble); border: 1px solid var(--border); border-bottom-right-radius: 4px; }
-  .row.user .bubble { background: var(--user-bubble); color: #fff; border-bottom-left-radius: 4px; font-weight: 700; }
-
-  .styles-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-  .style-row { background: #0f0f1e; border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-  .style-label { font-size: 0.6rem; color: var(--orange); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-  .style-text { color: #fff; font-size: 1.1rem; word-break: break-all; }
+  #extra-screen {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg); z-index: 2000; flex-direction: column;
+  }
+  .extra-header {
+    padding: 20px; display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border); background: var(--surface);
+  }
   
-  .cp { padding: 5px 12px; border-radius: 7px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'Cairo'; font-size: .75rem; transition: .2s; flex-shrink: 0; }
-  .cp:hover { border-color: var(--orange); color: var(--orange); }
+  .hamburger {
+    cursor: pointer; display: flex; flex-direction: column; gap: 5px; width: 30px;
+  }
+  .hamburger div { width: 100%; height: 3px; background: var(--orange); border-radius: 2px; }
+
+  #menu-overlay {
+    display: none; position: absolute; top: 70px; right: 20px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 2001; width: 200px; animation: slideDown 0.3s ease;
+  }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .menu-item {
+    padding: 12px; color: var(--text); cursor: pointer; border-radius: 8px;
+    font-weight: 700; display: flex; align-items: center; gap: 10px;
+  }
+  .menu-item:hover { background: var(--border); color: var(--orange); }
+
+  #color-section { display: none; padding: 25px; flex-direction: column; gap: 20px; }
+  .color-gen-btn { 
+    width: 100%; height: 55px; border-radius: 14px; border: none; 
+    background: linear-gradient(135deg, var(--orange), var(--orange2)); color: #fff; cursor: pointer; 
+    font-weight: 900; font-size: 1.1rem;
+  }
+
+  .input-area { display: flex; gap: 12px; padding: 18px 20px; background: var(--surface); border-top: 1px solid var(--border); }
+  input#inp, .custom-input { flex: 1; background: var(--card); border: 2px solid var(--border); border-radius: 16px; padding: 14px 20px; color: var(--text); font-family: 'Cairo'; outline: none; }
+  .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; }
+
+  .style-row { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
+  .cp { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'Cairo'; font-weight: 700; font-size: 0.75rem; white-space: nowrap; }
   .cp.done { border-color: #22c55e; color: #22c55e; }
-
-  .input-area { display: flex; gap: 10px; padding: 14px 16px; background: var(--surface); border-top: 1px solid var(--border); }
-  input { flex: 1; background: var(--card); border: 2px solid var(--border); border-radius: 12px; padding: 12px 16px; color: #fff; font-family: 'Cairo'; outline: none; }
-  .send-btn { width: 48px; height: 48px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--orange), var(--orange2)); color: #fff; cursor: pointer; font-size: 1.2rem; }
-
-  .typing { display: flex; gap: 4px; padding: 5px; }
-  .dot { width: 6px; height: 6px; background: var(--muted); border-radius: 50%; animation: bounce 1s infinite; }
-  .dot:nth-child(2) { animation-delay: .2s; }
-  .dot:nth-child(3) { animation-delay: .4s; }
-  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
 </style>
 </head>
-<body>
+<body data-theme="dark">
 
 <div class="header">
-  <div class="avatar">🤖</div>
-  <div class="name">بوت الزخرفة المطور</div>
+  <div class="header-info">
+    <div class="avatar" onclick="showExtraScreen()">
+      <img src="https://cdn-icons-png.flaticon.com/128/11306/11306137.png" alt="بوت">
+    </div>
+    <div class="name">𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</div>
+  </div>
+  <div class="theme-switch-wrapper">
+    <label class="theme-switch"><input type="checkbox" id="checkbox"><div class="slider"></div></label>
+  </div>
 </div>
 
 <div class="chat" id="chat"></div>
 
-<div class="input-area">
-  <input id="inp" type="text" placeholder="اسم | 1 للفراغ | 2 للرموز" maxlength="30">
+<div class="input-area" id="main-input">
+  <input id="inp" type="text" placeholder="اكتب اسمك أو رقم الخيار..." maxlength="30">
   <button class="send-btn" onclick="send()">➔</button>
 </div>
 
-<script>
-const SYMBOLS = ["☂", "☄", "☃", "☼", "☜", "☞", "✎", "☁", "♨", "❄", "𖣔", "❆", "𐓷", "𐓏", "✆", "✇", "☏", "❤︎", "☠︎", "☸", "✿"];
+<div id="extra-screen">
+  <div class="extra-header">
+    <div class="hamburger" onclick="toggleMenu()">
+      <div></div><div></div><div></div>
+    </div>
+    <div style="font-weight: 900; color: var(--orange);">الإضافات الاحترافية</div>
+    <button onclick="hideExtraScreen()" style="background:none; border:none; color:var(--text); font-size:1.5rem; cursor:pointer;">✕</button>
+  </div>
 
+  <div id="menu-overlay">
+    <div class="menu-item" onclick="openColorTool()">🎨 تلوين الأسماء</div>
+    <div class="menu-item" onclick="hideExtraScreen()">🏠 العودة للرئيسية</div>
+  </div>
+
+  <div id="color-section">
+    <h3 style="text-align: center;">أداة تلوين الأسماء</h3>
+    <input type="text" id="color-input" class="custom-input" placeholder="ادخل الاسم هنا...">
+    <button class="color-gen-btn" onclick="generateColors()">توليد الألوان ✨</button>
+    <div id="color-results" style="margin-top: 10px;"></div>
+  </div>
+  
+  <div id="empty-msg" style="flex:1; display:flex; align-items:center; justify-content:center; color:var(--muted); text-align:center; padding:20px;">
+    اضغط على زر القائمة (☰) بالأعلى لاكتشاف الأدوات
+  </div>
+</div>
+
+<script>
 const STYLES = [
-  { label: "Bold", map: "𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝒆𝗳𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝗾𝒓𝒔𝒕𝒖𝒗𝘄𝘅𝘆𝘇" },
-  { label: "Italic", map: "𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝒌𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘹𝘺𝘻" },
-  { label: "Bold Italic", map: "𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛" },
+  { label: "Bold", map: "𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶ｼ𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇" },
   { label: "Script", map: "𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵𝒶𝒷𝒸𝒹𝑒𝒻𝑔𝒽𝒾𝒿𝓀𝓁𝓂𝓃𝑜𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏" },
-  { label: "Bold Script", map: "𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃" },
-  { label: "Fraktur", map: "𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷" },
-  { label: "Double Struck", map: "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫" },
-  { label: "Circled", map: "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ" },
-  { label: "Wide", map: "ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ" },
-  { label: "Bold Fraktur", map: "𝕬𝕭𝕮𝕯𝕰𝕱𝕲𝕳𝕴𝕵𝕶𝕷𝕸𝕹𝕺𝕻𝕼𝕽𝕾𝕿𝖀𝖁𝖂𝖃𝖄𝖅𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟" },
+  { label: "Double", map: "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫" },
+  { label: "Circles", map: "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ" },
+  { label: "Small Caps", map: "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ" },
+  { label: "Gothic", map: "𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪┫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷" },
+  { label: "Boxes", map: "🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉" }
 ];
 
-function botReply(html) {
-  const chat = document.getElementById("chat");
-  const tRow = document.createElement("div");
-  tRow.className = "row bot"; tRow.id = "typing";
-  tRow.innerHTML = `<div class="bubble"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
-  chat.appendChild(tRow);
-  chat.scrollTop = chat.scrollHeight;
+const SYMBOLS = ["☠", "☂", "☃", "☁", "☼", "❆", "♨", "✎", "✏", "❤︎", "♨︎", "☏", "✆", "✇", "☸", "✿", "❀", "ꨄ︎", "𖣂", "☕︎", "ッ", "❀", "࿐", "★"];
 
-  setTimeout(() => {
-    tRow.remove();
-    const row = document.createElement("div");
-    row.className = "row bot";
-    row.innerHTML = `<div class="bubble">${html}</div>`;
-    chat.appendChild(row);
-    chat.scrollTop = chat.scrollHeight;
-  }, 600);
+function showExtraScreen() {
+  document.getElementById("extra-screen").style.display = "flex";
+}
+
+function hideExtraScreen() {
+  document.getElementById("extra-screen").style.display = "none";
+  document.getElementById("menu-overlay").style.display = "none";
+}
+
+function toggleMenu() {
+  const menu = document.getElementById("menu-overlay");
+  menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+function openColorTool() {
+  document.getElementById("empty-msg").style.display = "none";
+  document.getElementById("color-section").style.display = "flex";
+  document.getElementById("menu-overlay").style.display = "none";
+}
+
+function generateColors() {
+  const name = document.getElementById("color-input").value.trim();
+  const resDiv = document.getElementById("color-results");
+  if (!name) return;
+  const colors = [
+    {n:"أحمر",c:"#FF0000"},{n:"أزرق",c:"#007BFF"},
+    {n:"أخضر",c:"#2ECC71"},{n:"ذهبي",c:"#F1C40F"},
+    {n:"بنفسجي",c:"#9B59B6"}
+  ];
+  resDiv.innerHTML = colors.map(cl => `
+    <div class="style-row">
+      <span style="color:${cl.c}; font-weight:900;">${name}</span>
+      <button class="cp" onclick="cp('${name}', this)">نسخ</button>
+    </div>
+  `).join("");
 }
 
 function cp(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
-    const old = btn.textContent;
-    btn.textContent = "تم"; btn.classList.add("done");
-    setTimeout(() => { btn.textContent = old; btn.classList.remove("done"); }, 1500);
+    btn.textContent = "✅";
+    btn.classList.add("done");
+    setTimeout(() => { 
+        btn.textContent = "نسخ"; 
+        btn.classList.remove("done");
+    }, 1000);
   });
+}
+
+function botReply(html) {
+  const chat = document.getElementById("chat");
+  const row = document.createElement("div");
+  row.className = "row bot";
+  row.innerHTML = `<div class="bubble">${html}</div>`;
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
 }
 
 function send() {
@@ -121,45 +240,46 @@ function send() {
   userRow.className = "row user";
   userRow.innerHTML = `<div class="bubble">${val}</div>`;
   document.getElementById("chat").appendChild(userRow);
-  inp.value = "";
-
+  
   if (val === "1") {
-    botReply(`<b>الاسم الفارغ جاهز:</b>
-      <div class="style-row" style="margin-top:10px">
-        <span class="style-text">‎</span>
-        <button class="cp" onclick="cp('‎', this)">نسخ الفراغ</button>
+    botReply(`الاسم الفارغ الخاص بك جاهز:
+      <div class="style-row">
+        <span style="background:rgba(255,255,255,0.05); padding:2px 10px; border-radius:5px;">ㅤ</span>
+        <button class="cp" onclick="cp('ㅤ', this)">نسخ الآن</button>
       </div>`);
-  } 
-  else if (val === "2") {
-    let grid = `<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top:10px;">`;
+  } else if (val === "2") {
+    let symHtml = `<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-top:10px;">`;
     SYMBOLS.forEach(s => {
-      grid += `<div class="style-row"><span class="style-text">${s}</span><button class="cp" onclick="cp('${s}', this)">نسخ</button></div>`;
+        symHtml += `<div class="style-row" style="flex-direction:column; padding:10px;"><span>${s}</span><button class="cp" onclick="cp('${s}', this)">نسخ</button></div>`;
     });
-    grid += `</div>`;
-    botReply(`<b>قائمة الرموز:</b>${grid}`);
-  } 
-  else {
-    let res = `<div class="styles-grid">`;
+    symHtml += `</div>`;
+    botReply(`الرموز المميزة المضافة: ${symHtml}`);
+  } else {
+    let res = `<div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">`;
     STYLES.forEach(st => {
       let styled = [...val].map(c => {
-        let i = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".indexOf(c);
-        return i !== -1 ? [...st.map][i] : c;
+          let i = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".indexOf(c);
+          return i !== -1 ? [...st.map][i] : c;
       }).join("");
-      res += `<div class="style-row">
-                <div style="flex:1">
-                  <div class="style-label">${st.label}</div>
-                  <div class="style-text">${styled}</div>
-                </div>
-                <button class="cp" onclick="cp('${styled}', this)">نسخ</button>
-              </div>`;
+      res += `<div class="style-row"><span>${styled}</span><button class="cp" onclick="cp('${styled}', this)">نسخ</button></div>`;
     });
-    res += `</div>`;
-    botReply(`<b>زخارف لـ ${val}:</b>${res}`);
+    botReply(`زخارف لـ "${val}":${res}</div>`);
   }
+  
+  inp.value = "";
 }
 
-document.getElementById("inp").addEventListener("keypress", (e) => { if(e.key === "Enter") send(); });
-window.onload = () => botReply("أهلاً بك! 🤖<br><br>• أرسل رقم <b>1</b> لاسم فارغ.<br>• أرسل رقم <b>2</b> للرموز.<br>• أرسل أي اسم لزخرفته بعدة أشكال.");
+document.querySelector('#checkbox').addEventListener('change', (e) => {
+  document.body.setAttribute('data-theme', e.target.checked ? 'light' : 'dark');
+});
+
+window.onload = () => {
+  botReply(`اهلا بك في 𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨 ✨<br>
+  اكتب اسمك لزخرفه<br>
+  اكتب رقم <b>1</b> لحصول على اسم فارغ<br>
+  اكتب رقم <b>2</b> لحصول على رموز مميزة`);
+};
 </script>
 </body>
-</html>
+      </html>
+      
