@@ -115,8 +115,13 @@
   .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; }
 
   .style-row { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
-  .cp { padding: 6px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'Cairo'; font-weight: 700; font-size: 0.75rem; white-space: nowrap; }
+  .color-info { display: flex; flex-direction: column; gap: 2px; }
+  .color-hex { font-size: 0.7rem; color: var(--muted); font-family: monospace; }
+  
+  .btn-group { display: flex; gap: 5px; }
+  .cp { padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'Cairo'; font-weight: 700; font-size: 0.7rem; white-space: nowrap; }
   .cp.done { border-color: #22c55e; color: #22c55e; }
+  .cp.all { border-color: var(--orange); color: var(--orange); }
   
   .back-btn { background:none; border:none; color:var(--muted); margin-top:15px; cursor:pointer; font-family:'Cairo'; width:100%; font-weight: 700; padding: 10px; }
 </style>
@@ -190,7 +195,6 @@ const STYLES = [
   { label: "Boxes", map: "🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉" }
 ];
 
-// مصفوفة أسماء الكلانات الجديدة والمحدثة
 const CLANS = [
   "ᵀᵉᵃᵐツᎳᎪᏒᏒᎥᎾᏒ", "ᵀᵉᵃᵐ彡SHᎪDᎾᎳ", "ɢʜᴏsᴛ • ᴮᵁˢᵀᴱᴿ", 
   "ʜᴇᴀʀᴛs乂ʙʀᴏᴋᴇɴ", "ᵀᵉᵃᵐ★Cobra", "ＴＨＵＧ々ＬＩＦ Ꭼ", 
@@ -220,7 +224,6 @@ function openClanTool() {
   document.getElementById("menu-overlay-static").style.display = "none";
   document.getElementById("clan-section").style.display = "flex";
   const clanDiv = document.getElementById("clan-results");
-  // عرض قائمة الكلانات المحدثة
   clanDiv.innerHTML = CLANS.map(name => `<div class="style-row"><span>${name}</span><button class="cp" onclick="cp('${name.trim()}', this)">نسخ</button></div>`).join("");
 }
 
@@ -228,14 +231,38 @@ function generateColors() {
   const name = document.getElementById("color-input").value.trim();
   const resDiv = document.getElementById("color-results");
   if (!name) return;
-  const colors = [{n:"أحمر",c:"#FF0000"},{n:"أزرق",c:"#007BFF"},{n:"أخضر",c:"#2ECC71"},{n:"ذهبي",c:"#F1C40F"}];
-  resDiv.innerHTML = colors.map(cl => `<div class="style-row"><span style="color:${cl.c}; font-weight:900;">${name}</span><button class="cp" onclick="cp('${name}', this)">نسخ</button></div>`).join("");
+  
+  const colors = [
+    {n:"أحمر", c:"#FF0000"}, {n:"أزرق", c:"#007BFF"}, 
+    {n:"أخضر", c:"#2ECC71"}, {n:"ذهبي", c:"#F1C40F"},
+    {n:"وردي", c:"#FF00FB"}, {n:"برتقالي", c:"#FF5C00"},
+    {n:"سماوي", c:"#00FFFF"}
+  ];
+
+  resDiv.innerHTML = colors.map(cl => `
+    <div class="style-row">
+      <div class="color-info">
+        <span style="color:${cl.c}; font-weight:900;">${name}</span>
+        <span class="color-hex">${cl.c}</span>
+      </div>
+      <div class="btn-group">
+        <button class="cp all" onclick="cp('${cl.c}${name}', this)">الكل</button>
+        <button class="cp" onclick="cp('${name}', this)">الاسم</button>
+        <button class="cp" onclick="cp('${cl.c}', this)">كود</button>
+      </div>
+    </div>
+  `).join("");
 }
 
 function cp(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = "تم"; btn.classList.add("done");
-    setTimeout(() => { btn.textContent = "نسخ"; btn.classList.remove("done"); }, 1000);
+    const originalText = btn.textContent;
+    btn.textContent = "تم"; 
+    btn.classList.add("done");
+    setTimeout(() => { 
+      btn.textContent = originalText; 
+      btn.classList.remove("done"); 
+    }, 1000);
   });
 }
 
@@ -287,5 +314,4 @@ window.onload = () => {
 };
 </script>
 </body>
-    </html>
-      
+</html>
