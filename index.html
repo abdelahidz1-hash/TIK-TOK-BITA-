@@ -3,59 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨 - زخرفة فري فاير متحركة</title>
+<title>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨 - زخرفة أسماء وأكواد</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #080810;
-    --surface: rgba(16, 16, 30, 0.85); 
+    --surface: rgba(16, 16, 30, 0.85);
     --card: rgba(20, 20, 42, 0.85);
     --border: rgba(255, 255, 255, 0.1);
     --orange: #ff5c00;
-    --fire-low: #ff5c00;
-    --fire-high: #ffbe00;
     --text: #f0f0ff;
-    --bot-bubble: rgba(20, 20, 42, 0.95);
+    --bot-bubble: rgba(255, 255, 255, 0.07);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
   
   body { 
     font-family: 'Cairo', sans-serif; 
-    background-color: var(--bg);
+    background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/0f77bc3b090c6d61e6793f96e92d25e7.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: var(--text); 
     height: 100vh; 
     display: flex; 
     flex-direction: column; 
     overflow: hidden; 
-    position: relative; /* مهم لتموضع العناصر الخلفية */
   }
 
-  /* طبقة صورة الخلفية الثابتة */
-  .bg-image {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.85)), 
-                      url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/0f77bc3b090c6d61e6793f96e92d25e7.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    z-index: -2; /* تحت كل شيء */
-  }
-
-  /* طبقة تأثير الشرارات المتحركة (Canvas) */
-  #fire-canvas {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1; /* فوق الصورة وتحت المحتوى */
-    pointer-events: none; /* لا تتداخل مع النقر */
-  }
-
-  /* واجهة الإعدادات المغطاة */
   #settings-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: white; 
+    background: rgba(8, 8, 16, 0.98); 
+    backdrop-filter: blur(15px);
     z-index: 2000;
     display: none; 
     flex-direction: column;
@@ -70,16 +51,15 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    background: #f0f0f0;
-    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
     padding: 10px 15px;
     border-radius: 50%;
     cursor: pointer;
     font-size: 20px;
-    color: #333;
+    color: #fff;
   }
 
-  /* ترويسة التطبيق */
   .header { 
     display: flex; align-items: center; justify-content: space-between; 
     padding: 16px 20px; background: var(--surface); backdrop-filter: blur(10px);
@@ -96,96 +76,101 @@
   }
   @keyframes rainbow-move { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
-  /* منطقة الدردشة */
-  .chat { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 10; }
+  .chat { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
   .row { display: flex; align-items: flex-end; gap: 10px; animation: popIn .3s ease-out both; }
   @keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
   
   .row.bot { flex-direction: row; }
   .row.user { flex-direction: row-reverse; }
   
-  .bubble { 
-    max-width: 95%; padding: 14px 18px; border-radius: 20px; font-size: .95rem; line-height: 1.6; 
-    backdrop-filter: blur(8px);
-  }
-  .row.bot .bubble { background: var(--bot-bubble); border: 1px solid var(--border); color: var(--text); }
-  .row.user .bubble { background: rgba(255, 92, 0, 0.15); color: var(--text); font-weight: 700; border: 1px solid rgba(255,92,0,0.5); }
+  .bubble { max-width: 95%; padding: 14px 18px; border-radius: 20px; font-size: .95rem; line-height: 1.6; }
 
-  /* منطقة الإدخال */
+  .row.bot .bubble { 
+    background: var(--bot-bubble); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    color: var(--text); 
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+
+  .row.user .bubble { 
+    background: transparent;
+    color: var(--text); 
+    font-weight: 700; 
+    border: none;
+    padding: 14px 0;
+    box-shadow: none;
+  }
+
   .input-area { 
     display: flex; gap: 12px; padding: 18px 20px; background: var(--surface); 
     backdrop-filter: blur(15px); border-top: 1px solid var(--border); 
-    position: relative; z-index: 10;
   }
   input#inp { 
     flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); 
     border-radius: 16px; padding: 14px 20px; color: var(--text); outline: none; 
     font-family: 'Cairo', sans-serif;
   }
-  input#inp:focus { border-color: var(--orange); background: rgba(255,255,255,0.1); }
-  .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
-  .send-btn:hover { background: #ff752b; }
+  .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; font-size: 1.2rem;}
 
-  /* تنسيق صفوف الخيارات */
   .style-row { 
-    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); 
+    background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); 
     border-radius: 12px; padding: 8px 12px; display: flex; 
     justify-content: space-between; align-items: center; margin-bottom: 8px;
   }
-  .style-row:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
 
   .style-row span { margin-left: 10px; font-size: 0.85rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: pre-wrap; }
 
   .cp { 
-    padding: 6px 12px; border-radius: 8px; border: 1px solid var(--orange); 
-    background: transparent; color: var(--orange); cursor: pointer; 
-    font-weight: bold; font-size: 0.7rem; min-width: 55px; text-align: center;
-    font-family: 'Cairo', sans-serif;
+    display: flex; align-items: center; justify-content: center;
+    width: 35px; height: 35px; border-radius: 8px; border: 1px solid var(--orange); 
+    background: transparent; cursor: pointer; padding: 5px; flex-shrink: 0;
   }
-  .cp:hover { background: var(--orange); color: white; }
+  .cp img { width: 100%; height: 100%; filter: invert(47%) sepia(97%) saturate(2335%) hue-rotate(3deg) brightness(101%) contrast(105%); }
   
+  .cp.done { border-color: #2ECC71; }
+  .cp.done img { filter: invert(65%) sepia(35%) saturate(735%) hue-rotate(97deg) brightness(96%) contrast(92%); }
+
   .symbol-btn {
     width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
     font-size: 1.1rem; margin: 4px; background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 92, 0, 0.5); color: var(--text); border-radius: 10px; cursor: pointer;
+    border: 1px solid var(--orange); color: var(--text); border-radius: 10px; cursor: pointer;
   }
-  .symbol-btn:hover { border-color: var(--orange); background: rgba(255, 92, 0, 0.1); transform: scale(1.05); }
 
-  .cp.done, .symbol-btn.done { border-color: #2ECC71 !important; color: #2ECC71 !important; background: rgba(46, 204, 113, 0.1) !important; }
-  
-  .nav-btn { background:none; border:none; cursor:pointer; display: flex; align-items: center; opacity: 0.8; padding: 5px; border-radius: 8px; }
-  .nav-btn:hover { opacity: 1; background: rgba(255,255,255,0.1); }
-  .nav-btn img { width: 24px; height: 24px; object-fit: contain; }
-
-  /* تخصيص شريط التمرير */
-  .chat::-webkit-scrollbar { width: 6px; }
-  .chat::-webkit-scrollbar-track { background: transparent; }
-  .chat::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-  .chat::-webkit-scrollbar-thumb:hover { background: var(--orange); }
-
+  .nav-btn { background:none; border:none; cursor:pointer; display: flex; align-items: center; opacity: 0.8; padding: 5px;}
+  .nav-btn img { width: 26px; height: 26px; object-fit: contain; }
 </style>
 </head>
 <body>
 
-<div class="bg-image"></div>
-<canvas id="fire-canvas"></canvas>
-
 <div id="settings-overlay">
   <button class="close-settings" onclick="toggleSettings(false)">✕</button>
-  <div style="color: #333; font-weight: bold; font-size: 1.2rem;">واجهة الإعدادات</div>
-  <p style="color: #666; margin-top: 10px;">قريباً إضافة ميزات جديدة...</p>
+  <div class="settings-content">
+    <div style="color: var(--orange); font-weight: 900; font-size: 1.5rem; margin-bottom: 10px;">الإعدادات</div>
+    <p style="color: #aaa; margin-top: 10px;">هذه الواجهة قيد التطوير حالياً ⚙️</p>
+  </div>
 </div>
 
 <div class="header">
   <div class="name">𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</div>
   <div class="header-btns">
-    <a href="https://tiktok.com/@abdelahi.ff.dz.17" target="_blank" class="nav-btn" title="تيك توك">
+    <button class="nav-btn" onclick="location.reload()">
+      <img src="https://images.icon-icons.com/933/PNG/96/rotate-to-right-button_icon-icons.com_72597.png" alt="Refresh">
+    </button>
+    <a href="https://tiktok.com/@abdelahi.ff.dz.17" target="_blank" class="nav-btn">
       <img src="https://images.icon-icons.com/2992/PNG/96/tiktok_logo_icon_187324.png" alt="TikTok">
     </a>
-    <button class="nav-btn" onclick="clearChat()" title="مسح المحادثة">
+    <button class="nav-btn" onclick="clearChat()">
       <img src="https://cdn-icons-png.flaticon.com/128/3334/3334345.png" alt="Delete">
     </button>
-    <button class="nav-btn" onclick="toggleSettings(true)" title="الإعدادات">
+    <button class="nav-btn" onclick="toggleSettings(true)">
       <img src="https://cdn-icons-png.flaticon.com/128/18976/18976235.png" alt="Settings">
     </button>
   </div>
@@ -199,104 +184,8 @@
 </div>
 
 <script>
-// --- كود نظام الجسيمات (الشرارات المتحركة) ---
-const canvas = document.getElementById('fire-canvas');
-const ctx = canvas.getContext('2d');
-
-let width, height;
-let particles = [];
-
-// ضبط حجم الكانفاس لملء الشاشة
-function resize() {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-// كلاس الجسيم (الشرارة)
-class Particle {
-  constructor() {
-    this.reset();
-  }
-
-  reset() {
-    this.x = Math.random() * width; // موقع أفقي عشوائي
-    this.y = height + Math.random() * 100; // تبدأ من أسفل الشاشة
-    this.size = Math.random() * 3 + 1; // حجم عشوائي
-    this.speedY = Math.random() * -3 - 1; // سرعة للأعلى
-    this.speedX = Math.random() * 2 - 1; // حركة أفقية خفيفة
-    this.life = Math.random() * 100 + 50; // مدة الحياة
-    this.maxLife = this.life;
-    
-    // تدرج لوني بين البرتقالي والأصفر
-    const r = 255;
-    const g = Math.floor(Math.random() * 100 + 100); // 100 - 200
-    const b = 0;
-    this.color = `rgb(${r},${g},${b})`;
-  }
-
-  update() {
-    this.y += this.speedY;
-    this.x += this.speedX;
-    this.life--;
-
-    // تقليص الحجم مع اقتراب الموت
-    if (this.size > 0.2) this.size -= 0.01;
-
-    // إذا ماتت الجسيمة أو خرجت من الشاشة، أعد ضبطها
-    if (this.life <= 0 || this.y < -10) {
-      this.reset();
-    }
-  }
-
-  draw() {
-    ctx.globalAlpha = this.life / this.maxLife; // شفافية تعتمد على العمر
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
-    
-    // إضافة توهج (Glow)
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = this.color;
-  }
-}
-
-// إنشاء الجسيمات
-function initParticles() {
-  particles = [];
-  const particleCount = 100; // عدد الشرارات
-  for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle());
-  }
-}
-
-// حلقة التحريك
-function animate() {
-  ctx.clearRect(0, 0, width, height); // مسح الكانفاس
-  ctx.globalCompositeOperation = 'lighter'; // نمط دمج للألوان الزاهية
-
-  particles.forEach(p => {
-    p.update();
-    p.draw();
-  });
-  
-  // إعادة تعيين التأثيرات الافتراضية للرسم القادم
-  ctx.shadowBlur = 0;
-  ctx.globalAlpha = 1;
-  ctx.globalCompositeOperation = 'source-over';
-
-  requestAnimationFrame(animate);
-}
-
-// التشغيل
-initParticles();
-animate();
-
-
-// --- كود منطق البوت (القديم والمعدل قليلاً) ---
-let state = "idle"; 
+let state = "idle";
+const COPY_ICON = "https://cdn-icons-png.flaticon.com/128/9238/9238938.png";
 
 const FF_CODES = [
   { f: "🇩🇿", c: "[b][008000]█[FFFFFF]█[CC0000]█ ALGERIA ❤️" },
@@ -324,21 +213,17 @@ const NORMAL_CODES = [
 
 const CLAN_NAMES = [
   "ONLYㅤGOATSAㅤ??", "Only legend", "ONLYㅤGangㅤ??", "!ᴿᴱˣㅤBRAZIL", "ＩＱᅠ〆 T E A M",
-  "AD | SUPER Primeﾠﾠ〆 28", "Z  𓆩KAFN𓆪 ˣ", "𓆩O N L Y𓆪 〆9 A L 3 T", "WOLF TENX", "ＪＯＲＤＡＮ",
-  "ᵀᴵᴷ ヽᴘᴀ❀ɴᴇʟ", "ＧＳＧ〆IＲＡQ", "７Ｒ ＴＥＡＭ", "ᵀᵉᵃᵐツᎳᎪᏒᏒᎥᎾᏒ", "ᵀᵉᵃᵐ彡SHᎪDᎾᎳ",
-  "ɢʜᴏsᴛ • ᴮᵁˢᵀᴱᴿ", "ʜᴇᴀʀᴛs乂ʙʀᴏᴋᴇɴ", "ᵀᵉᵃᵐ★Cobra", "ＴＨＵＧ々ＬＩＦ Ꭼ", "PH   LHOWAYA",
-  "Ｏｎｌｙ ＳＡＧＯＭＳ", "ＳＡＧＯＭＳ", " Ｒ２　ＰＬＡＹＥＲ ❄︵²⁰", "X7 　ＰＬＡＹＥＲ", "O N L Y〆 T E A M모",
-  "ᴘᴏʟɪᴄ ᴛᴇᴀᴍ ☂", "ＮＥＸＴＳＴＡＲＳ", "X! WARRING", "RD BALIRMO", "BLAK KLOVER"
+  "AD | SUPER Primeﾠﾠ〆 28", "Z  𓆩KAFN𓆪 ˣ", "𓆩O N L Y𓆪 〆9 A L 3 T", "WOLF TENX", "ＪＯＲＤＡＮ"
 ];
 
 const COLORS = [
-  {n: "أحمر", c: "[FF0000]"}, {n: "أخضر", c: "[00FF00]"}, {n: "أزرق", c: "[0000FF]"},
-  {n: "أصفر", c: "[FFFF00]"}, {n: "بنفسجي", c: "[FF00FF]"}, {n: "سماوي", c: "[00FFFF]"},
-  {n: "برتقالي", c: "[FFA500]"}, {n: "وردي", c: "[FFC0CB]"}, {n: "أبيض", c: "[FFFFFF]"},
-  {n: "أسود", c: "[000000]"}, {n: "ذهبي", c: "[FFD700]"}, {n: "رمادي", c: "[808080]"}
+  {n: "أحمر", c: "[FF0000]", h: "#FF0000"}, {n: "أخضر", c: "[00FF00]", h: "#00FF00"}, 
+  {n: "أزرق", c: "[0000FF]", h: "#0000FF"}, {n: "أصفر", c: "[FFFF00]", h: "#FFFF00"}, 
+  {n: "بنفسجي", c: "[FF00FF]", h: "#FF00FF"}, {n: "سماوي", c: "[00FFFF]", h: "#00FFFF"}, 
+  {n: "أبيض", c: "[FFFFFF]", h: "#FFFFFF"}, {n: "ذهبي", c: "[FFD700]", h: "#FFD700"}
 ];
 
-const SYMBOLS = "☮ɞ✑𖣘☁☂☀☚☛☄☃☸☯☠☢☣☆ღ♫♪♨✿❀❤❣❥❄✎❆𐓏ϟ⛇༄࿓✏✆✇☏✁✂☎︎⚙︎⚠︎⚕︎♣♧➊➑ᦂᦦდ☙Ꮼʚ❥❧❦❤𖣓";
+const SYMBOLS = "☮ɞ✑𖣘☁☂☀☚☛☄☃☸☯☠☢☣☆ღ♫♪♨✿❀❤❣❥❄✎❆ϟ⛇༄࿓✏✁✂☎︎⚙︎⚠︎⚕︎♣♧➊➑ᦂᦦد❥❧❦❤𖣓";
 
 function toggleSettings(show) {
   document.getElementById("settings-overlay").style.display = show ? "flex" : "none";
@@ -346,8 +231,8 @@ function toggleSettings(show) {
 
 function cp(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
-    const old = btn.innerHTML; btn.innerText = "تم"; btn.classList.add("done");
-    setTimeout(() => { btn.innerHTML = old; btn.classList.remove("done"); }, 1000);
+    btn.classList.add("done");
+    setTimeout(() => { btn.classList.remove("done"); }, 1000);
   });
 }
 
@@ -370,112 +255,94 @@ function decorate(name) {
   const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const maps = [
     "ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ",
-    "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ",
-    "🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉",
-    "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓ＵＶ𝐖𝐗𝐘𝐙",
-    "𝘼𝘽𝘾𝘿𝙀𝙁𝙂𝙃𝙄𝙅𝙆𝙇𝙈𝙉𝙊𝙋𝙌𝙍𝙎𝙏𝙐𝙑𝙒𝙓𝙔𝙕",
-    "𝒜𝐵𝒞𝒟𝐸𝐹𝒢𝐻𝐼𝒥𝒦𝐿𝑀𝒩𝒪𝒫𝒬𝑅𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵",
-    "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ",
-    "ΛΉMΣDΣFGΉIJKLMПӨPQЯΣTЦVЩXYZ",
-    "卂乃匚刀乇下厶卄工丁长乚M𠘨口尸㔿尺丂丅凵リ山乂丫乙",
+    "Ⓐ⒒ⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ",
+    "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒ＴＵＶＷＸＹ𝐙",
     "αвc∂εғgнιjкℓмησpqяsтυνωxүz"
   ];
 
   let results = "";
-  // تحويل النص للمقارنة كأحرف كبيرة وتجنب تكرار الزخرفة إذا كان الاسم يحتوي رموزاً
-  let upperName = name.toUpperCase();
-  
   maps.forEach(m => {
     let d = "";
-    let mapArray = Array.from(m);
     for(let char of name){
       let idx = alpha.indexOf(char.toUpperCase());
-      if (idx > -1) {
-        d += mapArray[idx] || char;
-      } else { d += char; }
+      d += (idx > -1) ? Array.from(m)[idx] : char;
     }
-    if(d.trim() && d !== name) { // لا تضف إذا لم يتغير شيء أو فارغ
-      results += `<div class="style-row"><span>${d}</span><button class="cp" onclick="cp('${d}', this)">نسخ</button></div>`;
-    }
+    results += `<div class="style-row"><span>${d}</span><button class="cp" onclick="cp('${d}', this)"><img src="${COPY_ICON}"></button></div>`;
   });
-  
-  // إذا لم يتم توليد أي زخرفة (مثلاً اسم عربي)، أخبر المستخدم
-  return results || "عذراً، الزخرفة التلقائية تدعم الأحرف الإنجليزية حالياً. جرب الخيارات الأخرى.";
+  return results;
 }
 
 function showWelcome() {
-  botReply(`أهلاً بك في <b>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</b> 🔥<br>الخلفية الآن تشتعل!<br>• اكتب اسمك (EN) لزخرفته<br>• رقم <b>1</b> لاسم فارغ<br>• رقم <b>2</b> للرموز المميزة<br>• رقم <b>3</b> لتلوين الأسماء<br>• رقم <b>4</b> لأسماء كلانات جاهزة<br>• رقم <b>5</b> أكواد بروفايل فري فاير`);
+  botReply(`أهلاً بك في <b>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</b> ✨<br>
+  • اكتب اسمك للزخرفة<br>
+  • رقم ❶ اسم فارغ<br>
+  • رقم ➋ رموز مميزة<br>
+  • رقم ➌ تلوين الاسماء<br>
+  • رقم ➍ اسماء كلانات<br>
+  • رقم ➎ أكواد فري فاير`);
 }
 
 function send() {
   const inp = document.getElementById("inp");
-  const val = inp.value.trim(); if (!val) return;
+  let val = inp.value.trim(); if (!val) return;
   
+  const toCircleNumbers = (text) => {
+    return text.replace(/1/g, "❶").replace(/2/g, "➋").replace(/3/g, "➌").replace(/4/g, "➍").replace(/5/g, "➎");
+  };
+
+  const normalizedVal = val.replace(/❶/g, "1").replace(/➋/g, "2").replace(/➌/g, "3").replace(/➍/g, "4").replace(/➎/g, "5");
+
+  const chat = document.getElementById("chat");
   const userRow = document.createElement("div"); userRow.className = "row user";
-  userRow.innerHTML = `<div class="bubble">${val}</div>`;
-  document.getElementById("chat").appendChild(userRow);
+  userRow.innerHTML = `<div class="bubble">${toCircleNumbers(val)}</div>`;
+  chat.appendChild(userRow);
   
   if (state === "waiting_ff_choice") {
-    if (val === "1") {
-      let ffHtml = "";
-      for (let i = 0; i < FF_CODES.length; i += 2) {
-        let first = FF_CODES[i]; let second = FF_CODES[i+1];
-        ffHtml += `<div style="display:flex; gap:8px;"><div class="style-row" style="flex:1;"><span>${first.f}</span><button class="cp" onclick="cp('${first.c}', this)">نسخ</button></div>`;
-        if (second) ffHtml += `<div class="style-row" style="flex:1;"><span>${second.f}</span><button class="cp" onclick="cp('${second.c}', this)">نسخ</button></div>`;
-        ffHtml += `</div>`;
-      }
-      botReply(`أكواد الأعلام:<br>${ffHtml}`);
-      state = "idle";
-    } else if (val === "2") {
-      let normalHtml = "";
-      NORMAL_CODES.forEach(item => {
-        normalHtml += `<div class="style-row"><span style="font-size:0.75rem;">${item.n}</span><button class="cp" onclick="cp('${item.c}', this)">نسخ</button></div>`;
+    if (normalizedVal === "1") {
+      let ffHtml = `<div class="grid-container">`;
+      FF_CODES.forEach(item => {
+        ffHtml += `<div class="style-row"><span>${item.f}</span><button class="cp" onclick="cp('${item.c}', this)"><img src="${COPY_ICON}"></button></div>`;
       });
-      botReply(`الأكواد العادية:<br>${normalHtml}`);
-      state = "idle";
-    } else { botReply("يرجى اختيار 1 أو 2."); }
+      ffHtml += `</div>`;
+      botReply(`أكواد الأعلام:<br>${ffHtml}`); state = "idle";
+    } else if (normalizedVal === "2") {
+      let nHtml = "";
+      NORMAL_CODES.forEach(item => {
+        nHtml += `<div class="style-row"><span>${item.n}</span><button class="cp" onclick="cp('${item.c}', this)"><img src="${COPY_ICON}"></button></div>`;
+      });
+      botReply(`الأكواد العادية:<br>${nHtml}`); state = "idle";
+    }
   } else if (state === "waiting_color_name") {
-    let colorHtml = "";
-    COLORS.forEach(color => {
-      let hexColor = "#" + color.c.substring(1, 7);
-      colorHtml += `<div class="style-row"><span style="color: ${hexColor}; font-size:0.85rem;">${val}</span><button class="cp" onclick="cp('${color.c}${val}', this)">نسخ</button></div>`;
+    let cHtml = "";
+    COLORS.forEach(c => {
+      cHtml += `<div class="style-row"><span style="color: ${c.h};">${val}</span><button class="cp" onclick="cp('${c.c}${val}', this)"><img src="${COPY_ICON}"></button></div>`;
     });
-    botReply(`اسمك ملوناً:<br>${colorHtml}`);
-    state = "idle";
-  } else if (val === "1") {
-    botReply(`الاسم فارغ:<br><div class="style-row"><span>ㅤ</span><button class="cp" onclick="cp('ㅤ', this)">نسخ</button></div>`);
-  } else if (val === "2") {
-    let symHtml = "";
-    for(let s of SYMBOLS) { if(s.trim()) symHtml += `<button class="symbol-btn" onclick="cp('${s}', this)">${s}</button>`; }
-    botReply(`الرموز المميزة:<br><div style="display:flex; flex-wrap:wrap; justify-content:center;">${symHtml}</div>`);
-  } else if (val === "3") {
-    state = "waiting_color_name";
-    botReply("أرسل الاسم الذي تريد تلوينه...");
-  } else if (val === "4") {
-    let clanHtml = "";
-    CLAN_NAMES.forEach(name => {
-      if(name.trim()) clanHtml += `<div class="style-row"><span style="font-size:0.8rem;">${name}</span><button class="cp" onclick="cp('${name}', this)">نسخ</button></div>`;
+    botReply(`اسمك بالألوان (انسخ الكود جاهزاً):<br>${cHtml}`); state = "idle";
+  } else if (normalizedVal === "1") {
+    botReply(`<div class="style-row"><span>اسم فارغ</span><button class="cp" onclick="cp('ㅤ', this)"><img src="${COPY_ICON}"></button></div>`);
+  } else if (normalizedVal === "2") {
+    let sHtml = "";
+    for(let s of SYMBOLS) sHtml += `<button class="symbol-btn" onclick="cp('${s}', this)">${s}</button>`;
+    botReply(`<div style="display:flex; flex-wrap:wrap; justify-content:center;">${sHtml}</div>`);
+  } else if (normalizedVal === "3") {
+    state = "waiting_color_name"; botReply("أرسل الاسم الذي تريد تلوينه...");
+  } else if (normalizedVal === "4") {
+    let clHtml = "";
+    CLAN_NAMES.forEach(n => {
+      clHtml += `<div class="style-row"><span>${n}</span><button class="cp" onclick="cp('${n}', this)"><img src="${COPY_ICON}"></button></div>`;
     });
-    botReply(`أسماء الكلانات:<br>${clanHtml}`);
-  } else if (val === "5") {
-    state = "waiting_ff_choice";
-    botReply("ماذا تحتاج؟<br>1️⃣ - أكواد الأعلام<br>2️⃣ - أكواد عادية");
+    botReply(`أسماء الكلانات:<br>${clHtml}`);
+  } else if (normalizedVal === "5") {
+    state = "waiting_ff_choice"; botReply("❶ - أكواد الأعلام<br>➋ - أكواد عادية");
   } else {
     botReply(`زخرفة "${val}":<br>${decorate(val)}`);
   }
   inp.value = "";
-  // تمرير تلقائي لأسفل عند الإرسال
-  const chatDiv = document.getElementById("chat");
-  chatDiv.scrollTop = chatDiv.scrollHeight;
+  chat.scrollTop = chat.scrollHeight;
 }
 
-// دعم الإرسال بزر Enter
-document.getElementById("inp").addEventListener("keypress", function(e) {
-  if (e.key === "Enter") send();
-});
-
-window.onload = () => { showWelcome(); resize(); };
+window.onload = showWelcome;
+document.getElementById("inp").addEventListener("keypress", (e) => { if(e.key === "Enter") send(); });
 </script>
 </body>
-  </html>
-  
+</html>
