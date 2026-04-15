@@ -3,39 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</title>
+<title>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨 - زخرفة فري فاير متحركة</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #080810;
-    --surface: rgba(16, 16, 30, 0.8); 
+    --surface: rgba(16, 16, 30, 0.85); 
     --card: rgba(20, 20, 42, 0.85);
     --border: rgba(255, 255, 255, 0.1);
     --orange: #ff5c00;
+    --fire-low: #ff5c00;
+    --fire-high: #ffbe00;
     --text: #f0f0ff;
-    --bot-bubble: rgba(20, 20, 42, 0.9);
+    --bot-bubble: rgba(20, 20, 42, 0.95);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
   
   body { 
     font-family: 'Cairo', sans-serif; 
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                url('https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/202210/c11fd3c42b73afb36692311e71968192.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-color: var(--bg);
     color: var(--text); 
     height: 100vh; 
     display: flex; 
     flex-direction: column; 
     overflow: hidden; 
+    position: relative; /* مهم لتموضع العناصر الخلفية */
   }
 
+  /* طبقة صورة الخلفية الثابتة */
+  .bg-image {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.85)), 
+                      url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/0f77bc3b090c6d61e6793f96e92d25e7.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -2; /* تحت كل شيء */
+  }
+
+  /* طبقة تأثير الشرارات المتحركة (Canvas) */
+  #fire-canvas {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1; /* فوق الصورة وتحت المحتوى */
+    pointer-events: none; /* لا تتداخل مع النقر */
+  }
+
+  /* واجهة الإعدادات المغطاة */
   #settings-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: white;
+    background: white; 
     z-index: 2000;
     display: none; 
     flex-direction: column;
@@ -59,6 +79,7 @@
     color: #333;
   }
 
+  /* ترويسة التطبيق */
   .header { 
     display: flex; align-items: center; justify-content: space-between; 
     padding: 16px 20px; background: var(--surface); backdrop-filter: blur(10px);
@@ -75,9 +96,11 @@
   }
   @keyframes rainbow-move { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
-  .chat { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
+  /* منطقة الدردشة */
+  .chat { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 10; }
   .row { display: flex; align-items: flex-end; gap: 10px; animation: popIn .3s ease-out both; }
   @keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  
   .row.bot { flex-direction: row; }
   .row.user { flex-direction: row-reverse; }
   
@@ -86,50 +109,71 @@
     backdrop-filter: blur(8px);
   }
   .row.bot .bubble { background: var(--bot-bubble); border: 1px solid var(--border); color: var(--text); }
-  .row.user .bubble { background: transparent; color: var(--text); font-weight: 700; }
+  .row.user .bubble { background: rgba(255, 92, 0, 0.15); color: var(--text); font-weight: 700; border: 1px solid rgba(255,92,0,0.5); }
 
+  /* منطقة الإدخال */
   .input-area { 
     display: flex; gap: 12px; padding: 18px 20px; background: var(--surface); 
     backdrop-filter: blur(15px); border-top: 1px solid var(--border); 
+    position: relative; z-index: 10;
   }
   input#inp { 
     flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); 
     border-radius: 16px; padding: 14px 20px; color: var(--text); outline: none; 
+    font-family: 'Cairo', sans-serif;
   }
-  .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; }
+  input#inp:focus { border-color: var(--orange); background: rgba(255,255,255,0.1); }
+  .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+  .send-btn:hover { background: #ff752b; }
 
+  /* تنسيق صفوف الخيارات */
   .style-row { 
     background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); 
     border-radius: 12px; padding: 8px 12px; display: flex; 
     justify-content: space-between; align-items: center; margin-bottom: 8px;
   }
+  .style-row:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
 
   .style-row span { margin-left: 10px; font-size: 0.85rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: pre-wrap; }
 
   .cp { 
-    padding: 4px 8px; border-radius: 8px; border: 1px solid var(--orange); 
+    padding: 6px 12px; border-radius: 8px; border: 1px solid var(--orange); 
     background: transparent; color: var(--orange); cursor: pointer; 
-    font-weight: bold; font-size: 0.65rem; min-width: 45px; text-align: center;
+    font-weight: bold; font-size: 0.7rem; min-width: 55px; text-align: center;
+    font-family: 'Cairo', sans-serif;
   }
+  .cp:hover { background: var(--orange); color: white; }
   
   .symbol-btn {
-    width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; margin: 3px; background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--orange); color: var(--text); border-radius: 10px; cursor: pointer;
+    width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; margin: 4px; background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 92, 0, 0.5); color: var(--text); border-radius: 10px; cursor: pointer;
   }
+  .symbol-btn:hover { border-color: var(--orange); background: rgba(255, 92, 0, 0.1); transform: scale(1.05); }
 
-  .cp.done, .symbol-btn.done { border-color: #2ECC71; color: #2ECC71; }
+  .cp.done, .symbol-btn.done { border-color: #2ECC71 !important; color: #2ECC71 !important; background: rgba(46, 204, 113, 0.1) !important; }
   
-  .nav-btn { background:none; border:none; cursor:pointer; display: flex; align-items: center; opacity: 0.8; }
-  .nav-btn:hover { opacity: 1; }
-  .nav-btn img { width: 28px; height: 28px; object-fit: contain; }
+  .nav-btn { background:none; border:none; cursor:pointer; display: flex; align-items: center; opacity: 0.8; padding: 5px; border-radius: 8px; }
+  .nav-btn:hover { opacity: 1; background: rgba(255,255,255,0.1); }
+  .nav-btn img { width: 24px; height: 24px; object-fit: contain; }
+
+  /* تخصيص شريط التمرير */
+  .chat::-webkit-scrollbar { width: 6px; }
+  .chat::-webkit-scrollbar-track { background: transparent; }
+  .chat::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+  .chat::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+
 </style>
 </head>
 <body>
 
+<div class="bg-image"></div>
+<canvas id="fire-canvas"></canvas>
+
 <div id="settings-overlay">
   <button class="close-settings" onclick="toggleSettings(false)">✕</button>
-  <div style="color: #333; font-weight: bold;">واجهة الإعدادات</div>
+  <div style="color: #333; font-weight: bold; font-size: 1.2rem;">واجهة الإعدادات</div>
+  <p style="color: #666; margin-top: 10px;">قريباً إضافة ميزات جديدة...</p>
 </div>
 
 <div class="header">
@@ -155,6 +199,103 @@
 </div>
 
 <script>
+// --- كود نظام الجسيمات (الشرارات المتحركة) ---
+const canvas = document.getElementById('fire-canvas');
+const ctx = canvas.getContext('2d');
+
+let width, height;
+let particles = [];
+
+// ضبط حجم الكانفاس لملء الشاشة
+function resize() {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// كلاس الجسيم (الشرارة)
+class Particle {
+  constructor() {
+    this.reset();
+  }
+
+  reset() {
+    this.x = Math.random() * width; // موقع أفقي عشوائي
+    this.y = height + Math.random() * 100; // تبدأ من أسفل الشاشة
+    this.size = Math.random() * 3 + 1; // حجم عشوائي
+    this.speedY = Math.random() * -3 - 1; // سرعة للأعلى
+    this.speedX = Math.random() * 2 - 1; // حركة أفقية خفيفة
+    this.life = Math.random() * 100 + 50; // مدة الحياة
+    this.maxLife = this.life;
+    
+    // تدرج لوني بين البرتقالي والأصفر
+    const r = 255;
+    const g = Math.floor(Math.random() * 100 + 100); // 100 - 200
+    const b = 0;
+    this.color = `rgb(${r},${g},${b})`;
+  }
+
+  update() {
+    this.y += this.speedY;
+    this.x += this.speedX;
+    this.life--;
+
+    // تقليص الحجم مع اقتراب الموت
+    if (this.size > 0.2) this.size -= 0.01;
+
+    // إذا ماتت الجسيمة أو خرجت من الشاشة، أعد ضبطها
+    if (this.life <= 0 || this.y < -10) {
+      this.reset();
+    }
+  }
+
+  draw() {
+    ctx.globalAlpha = this.life / this.maxLife; // شفافية تعتمد على العمر
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // إضافة توهج (Glow)
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = this.color;
+  }
+}
+
+// إنشاء الجسيمات
+function initParticles() {
+  particles = [];
+  const particleCount = 100; // عدد الشرارات
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle());
+  }
+}
+
+// حلقة التحريك
+function animate() {
+  ctx.clearRect(0, 0, width, height); // مسح الكانفاس
+  ctx.globalCompositeOperation = 'lighter'; // نمط دمج للألوان الزاهية
+
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  
+  // إعادة تعيين التأثيرات الافتراضية للرسم القادم
+  ctx.shadowBlur = 0;
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
+
+  requestAnimationFrame(animate);
+}
+
+// التشغيل
+initParticles();
+animate();
+
+
+// --- كود منطق البوت (القديم والمعدل قليلاً) ---
 let state = "idle"; 
 
 const FF_CODES = [
@@ -204,9 +345,10 @@ function toggleSettings(show) {
 }
 
 function cp(text, btn) {
-  navigator.clipboard.writeText(text);
-  const old = btn.innerHTML; btn.innerText = "تم"; btn.classList.add("done");
-  setTimeout(() => { btn.innerHTML = old; btn.classList.remove("done"); }, 1000);
+  navigator.clipboard.writeText(text).then(() => {
+    const old = btn.innerHTML; btn.innerText = "تم"; btn.classList.add("done");
+    setTimeout(() => { btn.innerHTML = old; btn.classList.remove("done"); }, 1000);
+  });
 }
 
 function botReply(html) {
@@ -240,25 +382,29 @@ function decorate(name) {
   ];
 
   let results = "";
+  // تحويل النص للمقارنة كأحرف كبيرة وتجنب تكرار الزخرفة إذا كان الاسم يحتوي رموزاً
+  let upperName = name.toUpperCase();
+  
   maps.forEach(m => {
     let d = "";
+    let mapArray = Array.from(m);
     for(let char of name){
-      let upperChar = char.toUpperCase();
-      let idx = alpha.indexOf(upperChar);
+      let idx = alpha.indexOf(char.toUpperCase());
       if (idx > -1) {
-        let mapArray = Array.from(m);
         d += mapArray[idx] || char;
       } else { d += char; }
     }
-    if(d.trim()) {
+    if(d.trim() && d !== name) { // لا تضف إذا لم يتغير شيء أو فارغ
       results += `<div class="style-row"><span>${d}</span><button class="cp" onclick="cp('${d}', this)">نسخ</button></div>`;
     }
   });
-  return results;
+  
+  // إذا لم يتم توليد أي زخرفة (مثلاً اسم عربي)، أخبر المستخدم
+  return results || "عذراً، الزخرفة التلقائية تدعم الأحرف الإنجليزية حالياً. جرب الخيارات الأخرى.";
 }
 
 function showWelcome() {
-  botReply(`أهلاً بك في <b>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</b> ✨<br>• اكتب اسمك لزخرفته<br>• رقم <b>1</b> لاسم فارغ<br>• رقم <b>2</b> للرموز المميزة<br>• رقم <b>3</b> لتلوين الأسماء<br>• رقم <b>4</b> لأسماء كلانات جاهزة<br>• رقم <b>5</b> أكواد بروفايل فري فاير`);
+  botReply(`أهلاً بك في <b>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</b> 🔥<br>الخلفية الآن تشتعل!<br>• اكتب اسمك (EN) لزخرفته<br>• رقم <b>1</b> لاسم فارغ<br>• رقم <b>2</b> للرموز المميزة<br>• رقم <b>3</b> لتلوين الأسماء<br>• رقم <b>4</b> لأسماء كلانات جاهزة<br>• رقم <b>5</b> أكواد بروفايل فري فاير`);
 }
 
 function send() {
@@ -318,9 +464,18 @@ function send() {
     botReply(`زخرفة "${val}":<br>${decorate(val)}`);
   }
   inp.value = "";
+  // تمرير تلقائي لأسفل عند الإرسال
+  const chatDiv = document.getElementById("chat");
+  chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
-window.onload = () => { showWelcome(); };
+// دعم الإرسال بزر Enter
+document.getElementById("inp").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") send();
+});
+
+window.onload = () => { showWelcome(); resize(); };
 </script>
 </body>
-</html>
+  </html>
+  
