@@ -8,310 +8,319 @@
 <style>
   :root {
     --bg: #080810;
-    --surface: #10101e;
-    --card: #14142a;
-    --border: #1e1e3a;
+    --surface: rgba(16, 16, 30, 0.8); 
+    --card: rgba(20, 20, 42, 0.85);
+    --border: rgba(255, 255, 255, 0.1);
     --orange: #ff5c00;
-    --orange2: #ff8c42;
     --text: #f0f0ff;
-    --muted: #6666aa;
-    --bot-bubble: #14142a;
-    --user-bubble: transparent;
+    --bot-bubble: rgba(20, 20, 42, 0.9);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
-  body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-
-  /* الهيدر */
-  .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 1001; }
-  .header-info { display: flex; align-items: center; gap: 14px; }
   
+  body { 
+    font-family: 'Cairo', sans-serif; 
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                url('https://dl.dir.freefiremobile.com/common/web_event/official2.ff.garena.all/202210/c11fd3c42b73afb36692311e71968192.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text); 
+    height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+  }
+
+  #settings-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: white;
+    z-index: 2000;
+    display: none; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .close-settings {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #f0f0f0;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    color: #333;
+  }
+
+  .header { 
+    display: flex; align-items: center; justify-content: space-between; 
+    padding: 16px 20px; background: var(--surface); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border); z-index: 1001; 
+  }
+  
+  .header-btns { display: flex; gap: 15px; align-items: center; }
+
   .name { 
-    font-weight: 900; font-size: 1.1rem; letter-spacing: 1px; 
-    background: linear-gradient(to right, #ff5c00, #ff00fb, #007BFF, #2ECC71, #ff5c00);
+    font-weight: 900; font-size: 1.1rem; 
+    background: linear-gradient(to right, #ff5c00, #ff00fb, #007BFF, #ff5c00);
     background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     animation: rainbow-move 3s linear infinite;
   }
   @keyframes rainbow-move { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
-  .avatar {
-    width: 48px; height: 48px; border-radius: 50%;
-    background: linear-gradient(135deg, #2a2a40, #1a1a2e);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); overflow: hidden;
-    border: 2px solid var(--border);
-  }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-  .dev-btn {
-    background: var(--card); border: 1px solid var(--border); color: var(--text);
-    width: 42px; height: 42px; border-radius: 50%; font-size: 1.5rem;
-    cursor: pointer; display: flex; align-items: center; justify-content: center; 
-    transition: 0.4s ease;
-  }
-  .dev-btn:hover { border-color: transparent; animation: spin-rainbow 0.6s linear infinite; box-shadow: 0 0 15px rgba(255, 92, 0, 0.5); }
-
-  @keyframes spin-rainbow {
-    0% { transform: rotate(0deg); background: #ff5c00; }
-    25% { transform: rotate(90deg); background: #ff00fb; }
-    50% { transform: rotate(180deg); background: #007BFF; }
-    75% { transform: rotate(270deg); background: #2ECC71; }
-    100% { transform: rotate(360deg); background: #ff5c00; }
-  }
-
-  /* الدردشة */
   .chat { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
   .row { display: flex; align-items: flex-end; gap: 10px; animation: popIn .3s ease-out both; }
   @keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
   .row.bot { flex-direction: row; }
   .row.user { flex-direction: row-reverse; }
-  .bubble { max-width: 90%; padding: 14px 18px; border-radius: 20px; font-size: .95rem; line-height: 1.6; }
-  .row.bot .bubble { background: var(--bot-bubble); border: 1px solid var(--border); color: var(--text); }
-  .row.user .bubble { background: var(--user-bubble); color: var(--text); font-weight: 700; }
-
-  /* واجهة الإضافات */
-  #extra-screen {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #000; z-index: 2000; flex-direction: column;
-  }
-  .extra-header {
-    padding: 20px; display: flex; justify-content: space-between; align-items: center;
-    border-bottom: 1px solid var(--border); background: var(--surface);
-  }
-
-  #menu-overlay-static { padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 30px; margin-top: 30px; }
   
-  .tools-container { display: flex; gap: 40px; justify-content: center; width: 100%; }
-
-  .tool-item { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-
-  .color-circle-btn {
-    width: 30px; height: 30px; border-radius: 50%; 
-    background: #ffffff; color: #10101e; 
-    font-size: 0.9rem; display: flex; align-items: center;
-    justify-content: center; cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1); 
-    transition: 0.3s;
+  .bubble { 
+    max-width: 95%; padding: 14px 18px; border-radius: 20px; font-size: .95rem; line-height: 1.6; 
+    backdrop-filter: blur(8px);
   }
-  .color-circle-btn:hover { transform: scale(1.2); box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
+  .row.bot .bubble { background: var(--bot-bubble); border: 1px solid var(--border); color: var(--text); }
+  .row.user .bubble { background: transparent; color: var(--text); font-weight: 700; }
 
-  .menu-item {
-    width: 100%; max-width: 300px; padding: 16px; background: var(--card); 
-    border: 1px solid var(--border); color: var(--text); cursor: pointer; 
-    border-radius: 12px; font-weight: 700; text-align: center; transition: 0.2s;
+  .input-area { 
+    display: flex; gap: 12px; padding: 18px 20px; background: var(--surface); 
+    backdrop-filter: blur(15px); border-top: 1px solid var(--border); 
   }
-  .menu-item:hover { border-color: var(--orange); color: var(--orange); }
-
-  #color-section, #clan-section { display: none; padding: 25px; flex-direction: column; gap: 20px; overflow-y: auto; flex: 1; }
-  .color-gen-btn { 
-    width: 100%; height: 55px; border-radius: 14px; border: none; 
-    background: linear-gradient(135deg, var(--orange), var(--orange2)); color: #fff; cursor: pointer; 
-    font-weight: 900; font-size: 1.1rem;
+  input#inp { 
+    flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); 
+    border-radius: 16px; padding: 14px 20px; color: var(--text); outline: none; 
   }
-
-  .input-area { display: flex; gap: 12px; padding: 18px 20px; background: var(--surface); border-top: 1px solid var(--border); }
-  input#inp, .custom-input { flex: 1; background: var(--card); border: 2px solid var(--border); border-radius: 16px; padding: 14px 20px; color: var(--text); font-family: 'Cairo'; outline: none; }
   .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; }
 
-  .style-row { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
-  .color-info { display: flex; flex-direction: column; gap: 2px; }
-  .color-hex { font-size: 0.7rem; color: var(--muted); font-family: monospace; }
+  .style-row { 
+    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); 
+    border-radius: 12px; padding: 8px 12px; display: flex; 
+    justify-content: space-between; align-items: center; margin-bottom: 8px;
+  }
+
+  .style-row span { margin-left: 10px; font-size: 0.85rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: pre-wrap; }
+
+  .cp { 
+    padding: 4px 8px; border-radius: 8px; border: 1px solid var(--orange); 
+    background: transparent; color: var(--orange); cursor: pointer; 
+    font-weight: bold; font-size: 0.65rem; min-width: 45px; text-align: center;
+  }
   
-  .btn-group { display: flex; gap: 5px; }
-  .cp { padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; font-family: 'Cairo'; font-weight: 700; font-size: 0.7rem; white-space: nowrap; }
-  .cp.done { border-color: #22c55e; color: #22c55e; }
-  .cp.all { border-color: var(--orange); color: var(--orange); }
+  .symbol-btn {
+    width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; margin: 3px; background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--orange); color: var(--text); border-radius: 10px; cursor: pointer;
+  }
+
+  .cp.done, .symbol-btn.done { border-color: #2ECC71; color: #2ECC71; }
   
-  .back-btn { background:none; border:none; color:var(--muted); margin-top:15px; cursor:pointer; font-family:'Cairo'; width:100%; font-weight: 700; padding: 10px; }
+  .nav-btn { background:none; border:none; cursor:pointer; display: flex; align-items: center; opacity: 0.8; }
+  .nav-btn:hover { opacity: 1; }
+  .nav-btn img { width: 28px; height: 28px; object-fit: contain; }
 </style>
 </head>
 <body>
 
+<div id="settings-overlay">
+  <button class="close-settings" onclick="toggleSettings(false)">✕</button>
+  <div style="color: #333; font-weight: bold;">واجهة الإعدادات</div>
+</div>
+
 <div class="header">
-  <div class="header-info">
-    <div class="avatar">
-      <img src="https://cdn-icons-png.flaticon.com/128/11306/11306137.png" alt="بوت">
-    </div>
-    <div class="name">𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</div>
+  <div class="name">𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</div>
+  <div class="header-btns">
+    <a href="https://tiktok.com/@abdelahi.ff.dz.17" target="_blank" class="nav-btn" title="تيك توك">
+      <img src="https://images.icon-icons.com/2992/PNG/96/tiktok_logo_icon_187324.png" alt="TikTok">
+    </a>
+    <button class="nav-btn" onclick="clearChat()" title="مسح المحادثة">
+      <img src="https://cdn-icons-png.flaticon.com/128/3334/3334345.png" alt="Delete">
+    </button>
+    <button class="nav-btn" onclick="toggleSettings(true)" title="الإعدادات">
+      <img src="https://cdn-icons-png.flaticon.com/128/18976/18976235.png" alt="Settings">
+    </button>
   </div>
-  <button class="dev-btn" onclick="showExtraScreen()">
-    <span>⚙︎</span>
-  </button>
 </div>
 
 <div class="chat" id="chat"></div>
 
-<div class="input-area" id="main-input">
+<div class="input-area">
   <input id="inp" type="text" placeholder="اكتب اسمك أو رقم الخيار..." maxlength="30">
   <button class="send-btn" onclick="send()">➔</button>
 </div>
 
-<div id="extra-screen">
-  <div class="extra-header">
-    <div style="font-weight: 900; color: var(--orange);">الإضافات الاحترافية</div>
-    <button onclick="hideExtraScreen()" style="background:none; border:none; color:var(--text); font-size:1.5rem; cursor:pointer;">✕</button>
-  </div>
-  
-  <div id="menu-overlay-static">
-    <div class="tools-container">
-        <div class="tool-item">
-            <div class="color-circle-btn" onclick="openColorTool()">✎</div>
-            <p style="color: var(--muted); font-size: 0.75rem; font-weight: 700;">تلوين</p>
-        </div>
-
-        <div class="tool-item">
-            <div class="color-circle-btn" onclick="openClanTool()" style="background: var(--orange); color: white; border-color: var(--orange2);">⛨</div>
-            <p style="color: var(--muted); font-size: 0.75rem; font-weight: 700;">كلانات</p>
-        </div>
-    </div>
-
-    <div class="menu-item" onclick="hideExtraScreen()" style="margin-top: 20px;">العودة للدردشة</div>
-  </div>
-
-  <div id="color-section">
-    <h3 style="text-align: center;">أداة تلوين الأسماء</h3>
-    <input type="text" id="color-input" class="custom-input" placeholder="ادخل الاسم هنا...">
-    <button class="color-gen-btn" onclick="generateColors()">توليد الألوان</button>
-    <div id="color-results" style="margin-top: 10px;"></div>
-    <button onclick="resetExtra()" class="back-btn">العودة للقائمة</button>
-  </div>
-
-  <div id="clan-section">
-    <h3 style="text-align: center; margin-bottom: 10px;">قائمة أسماء الكلانات</h3>
-    <div id="clan-results"></div>
-    <button onclick="resetExtra()" class="back-btn">العودة للقائمة</button>
-  </div>
-</div>
-
 <script>
-const STYLES = [
-  { label: "Bold", map: "𝗔𝗕ＣＤＥＦＧＨＩＪＫＬ開𝗡𝗢Ｐ𝗤𝗥𝗦ＴＵＶＷ𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝒆𝗳𝗴𝗵𝗶ｼ𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇" },
-  { label: "Script", map: "𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩K𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵𝒶𝒷𝒸𝒹𝑒𝒻𝑔𝒽𝒾𝒿𝓀𝓁𝓂𝓃𝑜𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏" },
-  { label: "Double", map: "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝕒𝕓𝕔д𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫" },
-  { label: "Circles", map: "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ" },
-  { label: "Small Caps", map: "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ" },
-  { label: "Gothic", map: "𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪┫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷" },
-  { label: "Boxes", map: "🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉" }
+let state = "idle"; 
+
+const FF_CODES = [
+  { f: "🇩🇿", c: "[b][008000]█[FFFFFF]█[CC0000]█ ALGERIA ❤️" },
+  { f: "🇹🇳", c: "[b][CC0000]█[FFFFFF]🇹🇳[CC0000]█ TUNISIA ❤️" },
+  { f: "🇵🇸", c: "[b][000000]█[008000]█[FFFFFF]█[CC0000] PALESTINE" },
+  { f: "🇲🇦", c: "[b][CC0000]█[00FF33]★[CC0000]█ MOROCCO 🇲🇦" },
+  { f: "🇸🇾", c: "[b][FF0000]█[FFFFFF]█[000000]█ SYRIA [00FF00]★★" },
+  { f: "🇯🇴", c: "[b][CC0000]★[000000]█[FFFFFF]█[008000]█ JORDAN 🇯🇴" },
+  { f: "🇱🇾", c: "[b][000000]█[FF0000]█[008000]█ LIBYA" },
+  { f: "🇲🇷", c: "[b][008000]█[FFFF00]☪[008000]█ MAURITANIA" },
+  { f: "🇸🇦", c: "[008000]█[FFFFFF]⚔️[008000]█ KSA" },
+  { f: "🇪🇬", c: "[b][FF0000]█[FFFFFF]█[000000]█ EGYPT" },
+  { f: "🇮🇶", c: "[b][FF0000]█[FFFFFF]الله أكبر[000000]█ IRAQ" },
+  { f: "🇦🇪", c: "[FF0000]█[008000]█[FFFFFF]█[000000]█ UAE" },
+  { f: "🇰🇼", c: "[b][000000]█[008000]█[FFFFFF]█[FF0000]█ KUWAIT" }
 ];
 
-const CLANS = [
-  "ONLYㅤGOATSAㅤ??", "Only legend", "ONLYㅤGangㅤ??", "!ᴿᴱˣㅤBRAZIL",
-  "ＩＱᅠ〆 T E A M", "AD | SUPER Primeﾠﾠ〆 28", "Z 𓆩KAFN𓆪 ˣ",
-  "𓆩O N L Y𓆪 〆9 A L 3 T", "WOLF TENX", "ＪＯＲＤＡＮ", "ᵀᴵᴷ ヽᴘᴀ❀ɴᴇʟ",
-  "ＧＳＧ〆IＲＡQ", "７Ｒ ＴＥＡＭ", "ᵀᵉᵃᵐツᎳᎪᏒᏒᎥᎾᏒ", "ᵀᵉᵃᵐ彡SHᎪDᎾᎳ", 
-  "ɢʜᴏsᴛ • ᴮᵁˢᵀᴱᴿ", "ʜᴇᴀʀᴛs乂ʙʀᴏᴋᴇɴ", "ᵀᵉᵃᵐ★Cobra", "ＴＨＵＧ々ＬＩＦ Ꭼ", 
-  "PH LHOWAYA", "Ｏｎｌｙ ＳＡＧＯＭＳ", "ＳＡＧＯＭＳ", "Ｒ２ ＰＬＡＹＥＲ ❄︵²⁰"
+const NORMAL_CODES = [
+  { n: "كود المنزل", c: "[B][C]╱◥██████◣\n[7F00FF]│∩│▤│▤│▤\n▓▓▓▓▓▓▓▓▓" },
+  { n: "كود التدخين", c: "[b][6D7B8B]ᝰ[FFFFFF]▄▄▄▄▄▄[FFA000]▄▄▄\nGOLD FLAKE" },
+  { n: "كود الحب", c: "[FF0200]♥[FFFFFF]● ● \n/█\\/▓\\[FF0200]Ｉ LOVE U" },
+  { n: "كود BUS", c: "[B][C][00FFFF]╭━┳━┳━━┳━╮\n│──── BUS ┃□│\n╰◉─◉─━──◉╯" },
+  { n: "كود القلب", c: "[b][c][FF0000]✿\n[00FF00]᭄⸙  I ❤️ I LOVE YOU" }
 ];
 
-// الرموز المحدثة
-const SYMBOLS = ["♠︎", "☀︎", "☢︎", "☣︎", "❤", "ᦂ", "ო", "ɞ", "☙", "დ", "ʚ", "❦", "☮", "࿊", "☯", "☠", "☂", "☃", "☁", "☼", "❆", "♨", "✎", "✏", "❤︎", "♨︎", "☏", "✆", "✇", "☸", "✿", "❀", "ꨄ︎", "𖣂", "☕︎", "ッ", "࿐", "★"];
+const CLAN_NAMES = [
+  "ONLYㅤGOATSAㅤ??", "Only legend", "ONLYㅤGangㅤ??", "!ᴿᴱˣㅤBRAZIL", "ＩＱᅠ〆 T E A M",
+  "AD | SUPER Primeﾠﾠ〆 28", "Z  𓆩KAFN𓆪 ˣ", "𓆩O N L Y𓆪 〆9 A L 3 T", "WOLF TENX", "ＪＯＲＤＡＮ",
+  "ᵀᴵᴷ ヽᴘᴀ❀ɴᴇʟ", "ＧＳＧ〆IＲＡQ", "７Ｒ ＴＥＡＭ", "ᵀᵉᵃᵐツᎳᎪᏒᏒᎥᎾᏒ", "ᵀᵉᵃᵐ彡SHᎪDᎾᎳ",
+  "ɢʜᴏsᴛ • ᴮᵁˢᵀᴱᴿ", "ʜᴇᴀʀᴛs乂ʙʀᴏᴋᴇɴ", "ᵀᵉᵃᵐ★Cobra", "ＴＨＵＧ々ＬＩＦ Ꭼ", "PH   LHOWAYA",
+  "Ｏｎｌｙ ＳＡＧＯＭＳ", "ＳＡＧＯＭＳ", " Ｒ２　ＰＬＡＹＥＲ ❄︵²⁰", "X7 　ＰＬＡＹＥＲ", "O N L Y〆 T E A M모",
+  "ᴘᴏʟɪᴄ ᴛᴇᴀᴍ ☂", "ＮＥＸＴＳＴＡＲＳ", "X! WARRING", "RD BALIRMO", "BLAK KLOVER"
+];
 
-function showExtraScreen() { document.getElementById("extra-screen").style.display = "flex"; resetExtra(); }
-function hideExtraScreen() { document.getElementById("extra-screen").style.display = "none"; }
+const COLORS = [
+  {n: "أحمر", c: "[FF0000]"}, {n: "أخضر", c: "[00FF00]"}, {n: "أزرق", c: "[0000FF]"},
+  {n: "أصفر", c: "[FFFF00]"}, {n: "بنفسجي", c: "[FF00FF]"}, {n: "سماوي", c: "[00FFFF]"},
+  {n: "برتقالي", c: "[FFA500]"}, {n: "وردي", c: "[FFC0CB]"}, {n: "أبيض", c: "[FFFFFF]"},
+  {n: "أسود", c: "[000000]"}, {n: "ذهبي", c: "[FFD700]"}, {n: "رمادي", c: "[808080]"}
+];
 
-function resetExtra() {
-  document.getElementById("menu-overlay-static").style.display = "flex";
-  document.getElementById("color-section").style.display = "none";
-  document.getElementById("clan-section").style.display = "none";
-}
+const SYMBOLS = "☮ɞ✑𖣘☁☂☀☚☛☄☃☸☯☠☢☣☆ღ♫♪♨✿❀❤❣❥❄✎❆𐓏ϟ⛇༄࿓✏✆✇☏✁✂☎︎⚙︎⚠︎⚕︎♣♧➊➑ᦂᦦდ☙Ꮼʚ❥❧❦❤𖣓";
 
-function openColorTool() {
-  document.getElementById("menu-overlay-static").style.display = "none";
-  document.getElementById("color-section").style.display = "flex";
-}
-
-function openClanTool() {
-  document.getElementById("menu-overlay-static").style.display = "none";
-  document.getElementById("clan-section").style.display = "flex";
-  const clanDiv = document.getElementById("clan-results");
-  clanDiv.innerHTML = CLANS.map(name => `<div class="style-row"><span>${name}</span><button class="cp" onclick="cp('${name.trim()}', this)">نسخ</button></div>`).join("");
-}
-
-function generateColors() {
-  const name = document.getElementById("color-input").value.trim();
-  const resDiv = document.getElementById("color-results");
-  if (!name) return;
-  
-  const colors = [
-    {n:"أحمر", c:"#FF0000"}, {n:"أزرق", c:"#007BFF"}, 
-    {n:"أخضر", c:"#2ECC71"}, {n:"ذهبي", c:"#F1C40F"},
-    {n:"وردي", c:"#FF00FB"}, {n:"برتقالي", c:"#FF5C00"},
-    {n:"سماوي", c:"#00FFFF"}
-  ];
-
-  resDiv.innerHTML = colors.map(cl => `
-    <div class="style-row">
-      <div class="color-info">
-        <span style="color:${cl.c}; font-weight:900;">${name}</span>
-        <span class="color-hex">${cl.c}</span>
-      </div>
-      <div class="btn-group">
-        <button class="cp all" onclick="cp('${cl.c}${name}', this)">الكل</button>
-        <button class="cp" onclick="cp('${name}', this)">الاسم</button>
-        <button class="cp" onclick="cp('${cl.c}', this)">كود</button>
-      </div>
-    </div>
-  `).join("");
+function toggleSettings(show) {
+  document.getElementById("settings-overlay").style.display = show ? "flex" : "none";
 }
 
 function cp(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const originalText = btn.textContent;
-    btn.textContent = "تم"; 
-    btn.classList.add("done");
-    setTimeout(() => { 
-      btn.textContent = originalText; 
-      btn.classList.remove("done"); 
-    }, 1000);
-  });
+  navigator.clipboard.writeText(text);
+  const old = btn.innerHTML; btn.innerText = "تم"; btn.classList.add("done");
+  setTimeout(() => { btn.innerHTML = old; btn.classList.remove("done"); }, 1000);
 }
 
 function botReply(html) {
   const chat = document.getElementById("chat");
-  const row = document.createElement("div");
-  row.className = "row bot";
+  const row = document.createElement("div"); row.className = "row bot";
   row.innerHTML = `<div class="bubble">${html}</div>`;
-  chat.appendChild(row);
-  chat.scrollTop = chat.scrollHeight;
+  chat.appendChild(row); chat.scrollTop = chat.scrollHeight;
+}
+
+function clearChat() {
+  if (confirm("هل تريد حذف الدردشة؟")) {
+    document.getElementById("chat").innerHTML = "";
+    showWelcome();
+    state = "idle";
+  }
+}
+
+function decorate(name) {
+  const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const maps = [
+    "ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ",
+    "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏ",
+    "🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉",
+    "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓ＵＶ𝐖𝐗𝐘𝐙",
+    "𝘼𝘽𝘾𝘿𝙀𝙁𝙂𝙃𝙄𝙅𝙆𝙇𝙈𝙉𝙊𝙋𝙌𝙍𝙎𝙏𝙐𝙑𝙒𝙓𝙔𝙕",
+    "𝒜𝐵𝒞𝒟𝐸𝐹𝒢𝐻𝐼𝒥𝒦𝐿𝑀𝒩𝒪𝒫𝒬𝑅𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵",
+    "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ",
+    "ΛΉMΣDΣFGΉIJKLMПӨPQЯΣTЦVЩXYZ",
+    "卂乃匚刀乇下厶卄工丁长乚M𠘨口尸㔿尺丂丅凵リ山乂丫乙",
+    "αвc∂εғgнιjкℓмησpqяsтυνωxүz"
+  ];
+
+  let results = "";
+  maps.forEach(m => {
+    let d = "";
+    for(let char of name){
+      let upperChar = char.toUpperCase();
+      let idx = alpha.indexOf(upperChar);
+      if (idx > -1) {
+        let mapArray = Array.from(m);
+        d += mapArray[idx] || char;
+      } else { d += char; }
+    }
+    if(d.trim()) {
+      results += `<div class="style-row"><span>${d}</span><button class="cp" onclick="cp('${d}', this)">نسخ</button></div>`;
+    }
+  });
+  return results;
+}
+
+function showWelcome() {
+  botReply(`أهلاً بك في <b>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</b> ✨<br>• اكتب اسمك لزخرفته<br>• رقم <b>1</b> لاسم فارغ<br>• رقم <b>2</b> للرموز المميزة<br>• رقم <b>3</b> لتلوين الأسماء<br>• رقم <b>4</b> لأسماء كلانات جاهزة<br>• رقم <b>5</b> أكواد بروفايل فري فاير`);
 }
 
 function send() {
   const inp = document.getElementById("inp");
-  const val = inp.value.trim();
-  if (!val) return;
-  const userRow = document.createElement("div");
-  userRow.className = "row user";
+  const val = inp.value.trim(); if (!val) return;
+  
+  const userRow = document.createElement("div"); userRow.className = "row user";
   userRow.innerHTML = `<div class="bubble">${val}</div>`;
   document.getElementById("chat").appendChild(userRow);
   
-  if (val === "1") {
-    botReply(`الاسم الفارغ الخاص بك جاهز: <div class="style-row"><span style="background:rgba(255,255,255,0.05); padding:2px 10px; border-radius:5px;">ㅤ</span><button class="cp" onclick="cp('ㅤ', this)">نسخ</button></div>`);
-  } else if (val === "2") {
-    let symHtml = `<div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;">`;
-    SYMBOLS.forEach(s => { symHtml += `<div class="style-row" style="flex-direction:column;"><span>${s}</span><button class="cp" onclick="cp('${s}', this)">نسخ</button></div>`; });
-    botReply(`الرموز المميزة: ${symHtml}</div>`);
-  } else {
-    let res = `<div style="display:flex; flex-direction:column; gap:8px;">`;
-    STYLES.forEach(st => {
-      let styled = [...val].map(c => {
-          let i = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".indexOf(c);
-          return i !== -1 ? [...st.map][i] : c;
-      }).join("");
-      res += `<div class="style-row"><span>${styled}</span><button class="cp" onclick="cp('${styled}', this)">نسخ</button></div>`;
+  if (state === "waiting_ff_choice") {
+    if (val === "1") {
+      let ffHtml = "";
+      for (let i = 0; i < FF_CODES.length; i += 2) {
+        let first = FF_CODES[i]; let second = FF_CODES[i+1];
+        ffHtml += `<div style="display:flex; gap:8px;"><div class="style-row" style="flex:1;"><span>${first.f}</span><button class="cp" onclick="cp('${first.c}', this)">نسخ</button></div>`;
+        if (second) ffHtml += `<div class="style-row" style="flex:1;"><span>${second.f}</span><button class="cp" onclick="cp('${second.c}', this)">نسخ</button></div>`;
+        ffHtml += `</div>`;
+      }
+      botReply(`أكواد الأعلام:<br>${ffHtml}`);
+      state = "idle";
+    } else if (val === "2") {
+      let normalHtml = "";
+      NORMAL_CODES.forEach(item => {
+        normalHtml += `<div class="style-row"><span style="font-size:0.75rem;">${item.n}</span><button class="cp" onclick="cp('${item.c}', this)">نسخ</button></div>`;
+      });
+      botReply(`الأكواد العادية:<br>${normalHtml}`);
+      state = "idle";
+    } else { botReply("يرجى اختيار 1 أو 2."); }
+  } else if (state === "waiting_color_name") {
+    let colorHtml = "";
+    COLORS.forEach(color => {
+      let hexColor = "#" + color.c.substring(1, 7);
+      colorHtml += `<div class="style-row"><span style="color: ${hexColor}; font-size:0.85rem;">${val}</span><button class="cp" onclick="cp('${color.c}${val}', this)">نسخ</button></div>`;
     });
-    botReply(`زخارف لـ "${val}":${res}</div>`);
+    botReply(`اسمك ملوناً:<br>${colorHtml}`);
+    state = "idle";
+  } else if (val === "1") {
+    botReply(`الاسم فارغ:<br><div class="style-row"><span>ㅤ</span><button class="cp" onclick="cp('ㅤ', this)">نسخ</button></div>`);
+  } else if (val === "2") {
+    let symHtml = "";
+    for(let s of SYMBOLS) { if(s.trim()) symHtml += `<button class="symbol-btn" onclick="cp('${s}', this)">${s}</button>`; }
+    botReply(`الرموز المميزة:<br><div style="display:flex; flex-wrap:wrap; justify-content:center;">${symHtml}</div>`);
+  } else if (val === "3") {
+    state = "waiting_color_name";
+    botReply("أرسل الاسم الذي تريد تلوينه...");
+  } else if (val === "4") {
+    let clanHtml = "";
+    CLAN_NAMES.forEach(name => {
+      if(name.trim()) clanHtml += `<div class="style-row"><span style="font-size:0.8rem;">${name}</span><button class="cp" onclick="cp('${name}', this)">نسخ</button></div>`;
+    });
+    botReply(`أسماء الكلانات:<br>${clanHtml}`);
+  } else if (val === "5") {
+    state = "waiting_ff_choice";
+    botReply("ماذا تحتاج؟<br>1️⃣ - أكواد الأعلام<br>2️⃣ - أكواد عادية");
+  } else {
+    botReply(`زخرفة "${val}":<br>${decorate(val)}`);
   }
   inp.value = "";
 }
 
-window.onload = () => {
-  botReply(`
-    أهلاً بك في <b>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</b> ✨<br><br>
-    • اكتب اسمك لزخرفه ✎<br>
-    • اكتب رقم <b>1</b> للحصول على اسم فارغ 🫥<br>
-    • اكتب رقم <b>2</b> للحصول على رموز مميزة ☠︎
-  `);
-};
+window.onload = () => { showWelcome(); };
 </script>
 </body>
 </html>
