@@ -3,181 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Builder - Buttons 35px</title>
+    <title>App Builder - Blue UI & Red Audio Waves</title>
     <style>
-        body {
-            background-image: url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/db3a69875f0c96ca678f9fabcd413c32.jpg');
+        /* حاوية الخلفية العازلة */
+        .bg-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            margin: 0;
-            height: 100vh;
+            animation: backgroundTripleFade 12s ease-in-out infinite;
+        }
+
+        /* تأثير الدخان المتصاعد بالأزرق */
+        .smoke-effect {
+            position: absolute;
+            bottom: -150px; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(circle at 30% 100%, 
+                    rgba(0, 255, 255, 0.15) 0%, 
+                    rgba(0, 100, 255, 0.05) 30%, 
+                    transparent 70%
+                ),
+                radial-gradient(circle at 70% 100%, 
+                    rgba(0, 150, 255, 0.1) 0%, 
+                    transparent 80%
+                );
+            filter: blur(40px);
+            animation: smokeRise 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes backgroundTripleFade {
+            0%, 100% { 
+                background-image: url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/db3a69875f0c96ca678f9fabcd413c32.jpg');
+                filter: brightness(1.1);
+            }
+            30% { filter: brightness(0.6); }
+            33% { 
+                background-image: url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/e6127197756a70b865369113150ffd77.jpg');
+                filter: brightness(1.1);
+            }
+            63% { filter: brightness(0.6); }
+            66% { 
+                background-image: url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/2c4f40e9808ef5a6b20ee641ace2cfe5.jpg');
+                filter: brightness(1.1);
+            }
+            96% { filter: brightness(0.6); }
+        }
+
+        @keyframes smokeRise {
+            0%, 100% { transform: scaleY(1) translateY(0); opacity: 0.6; }
+            50% { transform: scaleY(1.3) translateY(-50px); opacity: 0.9; }
+        }
+
+        body {
+            margin: 0; height: 100vh;
             display: flex;
             font-family: 'Cairo', sans-serif;
             overflow: hidden;
             touch-action: none;
         }
 
-        /* حاوية الأزرار اليمنى */
-        .bottom-controls {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 15px; 
-            z-index: 999;
+        /* --- الأزرار الزرقاء --- */
+        #refreshBtn {
+            position: fixed; top: 20px; right: 20px;
+            width: 35px; height: 35px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00d9ff;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1001;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
         }
 
-        /* ترتيب الأزرار في الأعلى وبجانب بعضهما */
+        .bottom-controls {
+            position: fixed; bottom: 30px; right: 30px;
+            display: flex; flex-direction: column; align-items: flex-end;
+            gap: 15px; z-index: 999;
+        }
+
         .music-controls-stack {
-            display: flex;
-            flex-direction: row; 
-            gap: 10px;
-            align-items: center;
+            display: flex; flex-direction: row; 
+            gap: 12px; align-items: center;
             order: -1;
         }
 
+        /* --- موجات صوتية باللون الأحمر (تم التعديل) --- */
+        .audio-wave-effect {
+            position: absolute;
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.3); /* خلفية حمراء شفافة */
+            border: 2px solid #ff0000; /* حدود حمراء صريحة */
+            z-index: -1;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .playing + .audio-wave-effect {
+            animation: wavePulseRed 1.8s infinite;
+        }
+
+        @keyframes wavePulseRed {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.6); opacity: 0.6; box-shadow: 0 0 25px #ff0000; }
+            100% { transform: scale(2.4); opacity: 0; }
+        }
+
         .loading-wrapper {
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             gap: 10px;
-            padding: 8px 16px;
-            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.9);
             border-radius: 20px;
-            border: 1px solid rgba(255, 69, 0, 0.5);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            transition: opacity 0.5s ease;
+            border: 1px solid rgba(0, 217, 255, 0.6);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
         }
 
         .pro-loader-container {
-            width: 210px; 
-            height: 6px;
-            background: #111;
+            width: 220px; height: 7px;
+            background: #000;
             border-radius: 10px;
             overflow: hidden;
         }
 
         .pro-progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #ff4500, #ffba00);
-            box-shadow: 0 0 12px #ff4500;
-            transition: width 0.6s linear;
+            width: 0%; height: 100%;
+            background: linear-gradient(90deg, #0051ff, #00d9ff);
+            box-shadow: 0 0 15px #00d9ff;
+            transition: width 0.5s linear;
         }
 
         .pro-percentage {
-            color: #fff;
-            font-size: 14px;
-            font-weight: bold;
-            font-family: monospace;
-            min-width: 40px;
+            color: #fff; font-size: 15px;
+            font-weight: bold; font-family: monospace;
+            min-width: 45px;
         }
 
-        /* تعديل حجم زر الدخول ليصبح 35px */
         #actionBtn {
             display: none;
-            width: 35px;
-            height: 35px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ffff;
+            width: 42px; height: 42px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00d9ff;
             border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
-            padding: 5px;
-            animation: bounce 2s infinite;
+            padding: 8px;
+            animation: bounceBlue 2s infinite;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
         }
-
-        #actionBtn img { width: 100%; filter: invert(1); }
 
         #siteOverlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: #000;
             z-index: 10000;
-            animation: fadeIn 0.5s ease;
-        }
-
-        #siteFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
         }
 
         #movableBackBtn {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 35px;
-            height: 35px;
+            top: 20px; left: 20px;
+            width: 42px; height: 42px;
             background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #ff4500;
+            border: 2px solid #00d9ff;
             border-radius: 50%;
             cursor: move;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             z-index: 10001;
-            box-shadow: 0 0 15px rgba(255, 69, 0, 0.7);
-            user-select: none;
             touch-action: none;
         }
 
-        #movableBackBtn img { width: 25px; height: 25px; filter: invert(1); pointer-events: none; }
-
-        /* تعديل حجم أزرار الموسيقى والرفع لتصبح 35px */
         .circle-btn {
-            width: 35px;
-            height: 35px;
-            background: rgba(26, 26, 26, 0.9);
-            border: 2px solid #ff4500;
+            width: 40px; height: 40px;
+            background: rgba(10, 10, 20, 0.98);
+            border: 2px solid #00d9ff;
             border-radius: 50%;
             cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
+            display: flex; justify-content: center; align-items: center;
+            transition: 0.3s;
+        }
+        .circle-btn img, #actionBtn img, #refreshBtn img, #movableBackBtn img {
+            width: 65%; filter: invert(1);
+        }
+        
+        /* وميض الزر عند التشغيل باللون الأحمر ليطابق الموجات */
+        .playing { 
+            animation: pulse-med-red 1.5s infinite; 
+            border-color: #ff0000 !important; 
+            box-shadow: 0 0 25px #ff0000 !important; 
         }
 
-        .circle-btn img { width: 60%; filter: invert(1); }
-        .playing { animation: pulse-med 1.5s infinite; border-color: #00ffff; box-shadow: 0 0 15px rgba(0, 255, 255, 0.4); }
-
-        #musicUpload { display: none; }
-
-        @keyframes pulse-med { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse-med-red { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+        @keyframes bounceBlue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     </style>
 </head>
 <body onclick="startOnFirstClick()">
 
+    <div class="bg-layer">
+        <div class="bg-image"></div>
+        <div class="smoke-effect"></div>
+    </div>
+
+    <div id="refreshBtn" onclick="location.reload()">
+        <img src="https://images.icon-icons.com/1380/PNG/96/emblemsynchronizing_93485.png">
+    </div>
+
     <div id="siteOverlay">
         <div id="movableBackBtn">
-            <img src="https://images.icon-icons.com/4230/PNG/512/right_circle_arrow_icon_263631.png" alt="رجوع">
+            <img src="https://images.icon-icons.com/4230/PNG/512/right_circle_arrow_icon_263631.png">
         </div>
-        <iframe id="siteFrame" src=""></iframe>
+        <iframe id="siteFrame" style="width:100%; height:100%; border:none;"></iframe>
     </div>
 
     <div class="bottom-controls">
         <div class="music-controls-stack">
-            <label for="musicUpload" class="circle-btn" id="uploadBtn">
+            <label for="musicUpload" class="circle-btn">
                 <img src="https://images.icon-icons.com/1150/PNG/512/1486504817-data-doc-folder-data-storage-file-storage-open_81345.png">
             </label>
-            <input type="file" id="musicUpload" accept="audio/*">
+            <input type="file" id="musicUpload" accept="audio/*" style="display:none">
 
-            <button class="circle-btn" id="playBtn" onclick="toggleMusic(event)">
-                <img id="iconImg" src="https://images.icon-icons.com/2449/PNG/512/headphones_head_set_chat_live_support_icon_148822.png">
-            </button>
+            <div style="position:relative; display:flex; justify-content:center; align-items:center;">
+                <button class="circle-btn" id="playBtn" onclick="toggleMusic(event)">
+                    <img id="iconImg" src="https://images.icon-icons.com/2449/PNG/512/headphones_head_set_chat_live_support_icon_148822.png">
+                </button>
+                <div class="audio-wave-effect"></div>
+            </div>
         </div>
 
         <div class="loading-wrapper" id="loaderBox">
-            <div class="pro-loader-container"><div class="pro-progress-bar" id="myBar"></div></div>
+            <div class="pro-loader-container">
+                <div class="pro-progress-bar" id="myBar"></div>
+            </div>
             <div class="pro-percentage" id="percentText">0%</div>
         </div>
 
@@ -198,9 +269,6 @@
         const percentText = document.getElementById('percentText');
         const loaderBox = document.getElementById('loaderBox');
         const actionBtn = document.getElementById('actionBtn');
-        const siteOverlay = document.getElementById('siteOverlay');
-        const siteFrame = document.getElementById('siteFrame');
-        const backBtn = document.getElementById('movableBackBtn');
 
         musicUpload.addEventListener('change', function(e) {
             const files = e.target.files;
@@ -223,85 +291,40 @@
                     bar.style.width = width + '%';
                     percentText.innerHTML = width + '%';
                 }
-            }, 600);
-        }
-
-        function openSite() {
-            siteFrame.src = "https://abdelahidz1-hash.github.io/BOT-ZA5RAFA-/";
-            siteOverlay.style.display = 'block';
-        }
-
-        function closeSite() {
-            siteOverlay.style.display = 'none';
-            siteFrame.src = "";
+            }, 500);
         }
 
         window.onload = moveLoader;
 
+        function openSite() {
+            document.getElementById('siteFrame').src = "https://abdelahidz1-hash.github.io/BOT-ZA5RAFA-/";
+            document.getElementById('siteOverlay').style.display = 'block';
+        }
+
+        function closeSite() {
+            document.getElementById('siteOverlay').style.display = 'none';
+            document.getElementById('siteFrame').src = "";
+        }
+
         let isDragging = false;
-        let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+        let xOffset = 0, yOffset = 0;
+        const backBtn = document.getElementById('movableBackBtn');
 
-        backBtn.addEventListener("mousedown", dragStart);
-        backBtn.addEventListener("touchstart", dragStart);
-        document.addEventListener("mousemove", drag);
-        document.addEventListener("touchmove", drag);
-        document.addEventListener("mouseup", dragEnd);
-        document.addEventListener("touchend", dragEnd);
-
-        function dragStart(e) {
-            isDragging = true;
-            backBtn.style.transition = "none";
-            const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
-            const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
-            initialX = clientX - xOffset;
-            initialY = clientY - yOffset;
-        }
-
-        function drag(e) {
-            if (isDragging) {
-                e.preventDefault();
-                const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
-                const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
-                currentX = clientX - initialX;
-                currentY = clientY - initialY;
-                xOffset = currentX;
-                yOffset = currentY;
-                backBtn.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-            }
-        }
-
-        function dragEnd() {
-            if (!isDragging) return;
-            initialX = currentX;
-            initialY = currentY;
-            isDragging = false;
-            backBtn.style.transition = "transform 0.2s ease-out";
-        }
-
-        backBtn.addEventListener('click', function() {
-            if (Math.abs(xOffset) < 5 && Math.abs(yOffset) < 5) closeSite();
-            xOffset = 0; yOffset = 0;
-            backBtn.style.transform = `translate3d(0, 0, 0)`;
+        backBtn.addEventListener('touchstart', (e) => isDragging = true);
+        document.addEventListener('touchmove', (e) => {
+            if(!isDragging) return;
+            let touch = e.touches[0];
+            xOffset = touch.clientX - 25;
+            yOffset = touch.clientY - 25;
+            backBtn.style.transform = `translate3d(${xOffset}px, ${yOffset}px, 0)`;
         });
+        document.addEventListener('touchend', () => isDragging = false);
+        backBtn.addEventListener('click', () => { closeSite(); backBtn.style.transform = 'none'; xOffset=0; yOffset=0; });
 
-        function startOnFirstClick() { 
-            if (!window.hasStarted) { playAudio(); window.hasStarted = true; } 
-        }
-
-        function toggleMusic(event) { 
-            event.stopPropagation(); 
-            music.paused ? playAudio() : pauseAudio(); 
-        }
-
-        function playAudio() { 
-            music.play(); 
-            playBtn.classList.add('playing'); 
-        }
-
-        function pauseAudio() { 
-            music.pause(); 
-            playBtn.classList.remove('playing'); 
-        }
+        function startOnFirstClick() { if (!window.hasStarted) { playAudio(); window.hasStarted = true; } }
+        function toggleMusic(event) { event.stopPropagation(); music.paused ? playAudio() : pauseAudio(); }
+        function playAudio() { music.play(); playBtn.classList.add('playing'); }
+        function pauseAudio() { music.pause(); playBtn.classList.remove('playing'); }
     </script>
 </body>
 </html>
