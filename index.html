@@ -3,198 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOT ZA5RAFA</title>
+    <title>BOT ZA5RAFA - Auto Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* حاوية الخلفية العازلة */
-        .bg-layer {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background-color: #000;
-            overflow: hidden;
+        body { 
+            margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; 
+            font-family: 'Cairo', sans-serif; overflow: hidden; background: #000; 
+        }
+        
+        .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .bg-image { 
+            position: absolute; width: 100%; height: 100%; 
+            background-image: url('https://res.cloudinary.com/dpggetoyh/image/upload/v1776594775/Tanjiro_Flame_Breathing_Aesthetic_gad8rk.jpg');
+            background-size: cover; background-position: center;
+            filter: brightness(0.6); 
         }
 
-        .bg-image {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            animation: backgroundTripleFade 12s ease-in-out infinite;
+        /* شريط التحميل */
+        #loader-container { text-align: center; z-index: 20; width: 80%; max-width: 400px; }
+        .progress-wrapper {
+            width: 100%; height: 20px; background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer; position: relative;
+        }
+        #progress-fill {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #ff0000, #ff7b00);
+            box-shadow: 0 0 15px #ff4500; transition: width 0.1s linear;
+        }
+        .loading-text { color: #fff; margin-bottom: 10px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .hint-text { color: rgba(255,255,255,0.5); font-size: 11px; margin-top: 8px; }
+
+        /* واجهة الدخول - شفافة تماماً بدون ضباب */
+        #login-interface { display: none; }
+        .glass-panel {
+            width: 280px; 
+            background: rgba(255, 255, 255, 0.05); /* خلفية خفيفة جداً */
+            backdrop-filter: none; /* تم مسح الضبابية هنا */
+            -webkit-backdrop-filter: none;
+            border: 1.5px solid rgba(255, 255, 255, 0.4); /* حدود واضحة لتمييز المربع */
+            border-radius: 25px; 
+            text-align: center; 
+            padding: 25px 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+        
+        .top-icon {
+            width: 35px; height: 35px; 
+            border-radius: 10px; 
+            margin-bottom: 12px; 
+            border: 1.5px solid rgba(255,255,255,0.5);
+            object-fit: cover;
         }
 
-        .smoke-effect {
-            position: absolute;
-            bottom: -150px; left: 0;
-            width: 100%; height: 100%;
-            background-image: radial-gradient(circle at 30% 100%, rgba(0, 255, 255, 0.15) 0%, rgba(0, 100, 255, 0.05) 30%, transparent 70%), radial-gradient(circle at 70% 100%, rgba(0, 150, 255, 0.1) 0%, transparent 80%);
-            filter: blur(40px);
-            animation: smokeRise 6s ease-in-out infinite;
-            pointer-events: none;
+        .video-wrapper { 
+            width: 86%; margin: 0 auto 20px auto; 
+            border-radius: 15px; overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.3); 
         }
-
-        @keyframes backgroundTripleFade {
-            0%, 100% { background-image: url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/db3a69875f0c96ca678f9fabcd413c32.jpg'); filter: brightness(1.1); }
-            30% { filter: brightness(0.6); }
-            33% { background-image: url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/e6127197756a70b865369113150ffd77.jpg'); filter: brightness(1.1); }
-            63% { filter: brightness(0.6); }
-            66% { background-image: url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/2c4f40e9808ef5a6b20ee641ace2cfe5.jpg'); filter: brightness(1.1); }
-            96% { filter: brightness(0.6); }
+        .panel-video { width: 100%; display: block; }
+        
+        .input-group { padding: 0 25px; margin-bottom: 15px; }
+        input {
+            width: 100%; padding: 12px; 
+            background: rgba(0, 0, 0, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            border-radius: 12px;
+            color: #fff; font-family: 'Cairo', sans-serif; 
+            text-align: center; outline: none;
         }
+        input::placeholder { color: rgba(255,255,255,0.7); }
 
-        @keyframes smokeRise {
-            0%, 100% { transform: scaleY(1) translateY(0); opacity: 0.6; }
-            50% { transform: scaleY(1.3) translateY(-50px); opacity: 0.9; }
-        }
-
-        body { margin: 0; height: 100vh; display: flex; font-family: 'Cairo', sans-serif; overflow: hidden; touch-action: none; }
-
-        #refreshBtn {
-            position: fixed; top: 20px; right: 20px;
-            width: 35px; height: 35px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00d9ff;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 1001;
-            box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
-        }
-
-        .bottom-controls {
-            position: fixed; bottom: 30px; right: 30px;
-            display: flex; flex-direction: column; align-items: flex-end;
-            gap: 15px; z-index: 999;
-        }
-
-        .music-controls-stack { display: flex; flex-direction: row; gap: 12px; align-items: center; order: -1; }
-
-        .audio-wave-effect {
-            position: absolute; width: 60px; height: 60px; border-radius: 50%;
-            background: rgba(255, 0, 0, 0.3); border: 2px solid #ff0000;
-            z-index: -1; opacity: 0; pointer-events: none;
-        }
-
-        .playing + .audio-wave-effect { animation: wavePulseRed 1.8s infinite; }
-
-        @keyframes wavePulseRed {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.6); opacity: 0.6; box-shadow: 0 0 25px #ff0000; }
-            100% { transform: scale(2.4); opacity: 0; }
-        }
-
-        /* زر الدخول الرئيسي */
-        #actionBtn {
-            display: block; /* يظهر مباشرة */
-            width: 50px; height: 50px; 
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #00d9ff; 
-            border-radius: 50%; 
-            cursor: pointer; 
-            padding: 10px;
-            animation: bounceBlue 2s infinite; 
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
-        }
-
-        #siteOverlay {
-            display: none; position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; background: #000; z-index: 10000;
-        }
-
-        .circle-btn {
-            width: 40px; height: 40px; background: rgba(10, 10, 20, 0.98);
-            border: 2px solid #00d9ff; border-radius: 50%; cursor: pointer;
-            display: flex; justify-content: center; align-items: center; transition: 0.3s;
-        }
-        .circle-btn img, #actionBtn img, #refreshBtn img { width: 65%; filter: invert(1); }
-        .playing { border-color: #ff0000 !important; box-shadow: 0 0 25px #ff0000 !important; }
-
-        @keyframes bounceBlue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .status-msg { color: #00ff00; font-size: 13px; margin-top: 5px; display: none; font-weight: bold; text-shadow: 0 0 5px #000; }
+        .waiting-msg { color: #ffae00; font-size: 12px; margin-top: 5px; display: none; font-weight: bold; text-shadow: 0 0 5px #000; }
     </style>
 </head>
-<body onclick="startOnFirstClick()">
+<body>
 
     <div class="bg-layer">
         <div class="bg-image"></div>
-        <div class="smoke-effect"></div>
     </div>
 
-    <div id="refreshBtn" onclick="location.reload()">
-        <img src="https://images.icon-icons.com/1380/PNG/96/emblemsynchronizing_93485.png">
-    </div>
-
-    <div id="siteOverlay">
-        <iframe id="siteFrame" style="width:100%; height:100%; border:none;"></iframe>
-    </div>
-
-    <div class="bottom-controls">
-        <div class="music-controls-stack">
-            <label for="musicUpload" class="circle-btn">
-                <img src="https://images.icon-icons.com/1150/PNG/512/1486504817-data-doc-folder-data-storage-file-storage-open_81345.png">
-            </label>
-            <input type="file" id="musicUpload" accept="audio/*" style="display:none">
-
-            <div style="position:relative; display:flex; justify-content:center; align-items:center;">
-                <button class="circle-btn" id="playBtn" onclick="toggleMusic(event)">
-                    <img id="iconImg" src="https://images.icon-icons.com/2449/PNG/512/headphones_head_set_chat_live_support_icon_148822.png">
-                </button>
-                <div class="audio-wave-effect"></div>
-            </div>
+    <div id="loader-container">
+        <div class="loading-text">جاري الاتصال بالسيرفر... <span id="percentage">0%</span></div>
+        <div class="progress-wrapper" onclick="speedUp()">
+            <div id="progress-fill"></div>
         </div>
-
-        <button id="actionBtn" onclick="openSite()">
-            <img src="https://images.icon-icons.com/3298/PNG/512/entry_door_open_icon_208681.png">
-        </button>
+        <div class="hint-text">اضغط على شريط التحميل للتسريع ⚡</div>
     </div>
 
-    <audio id="bgMusic" loop>
-        <source src="https://res.cloudinary.com/dpggetoyh/video/upload/v1776255094/Legacy___Free_Fire_x_Alok_M4A_128K_kftymq.m4a" type="audio/mp4">
-    </audio>
+    <div id="login-interface" class="glass-panel">
+        <img src="https://res.cloudinary.com/dpggetoyh/image/upload/v1776595066/a7e855b8-78b0-40b2-8487-e4cf76587e22_xfqhb3.jpg" class="top-icon" alt="icon">
+        
+        <div class="video-wrapper">
+            <video id="loginVid" class="panel-video" loop muted playsinline>
+                <source src="https://res.cloudinary.com/dpggetoyh/video/upload/v1776416800/VID_20260417_100508_015_j8xfcl.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="input-group">
+            <input type="text" placeholder="اسم المستخدم" id="loginUser">
+        </div>
+        <div class="input-group">
+            <input type="password" placeholder="كلمة المرور" id="loginPass" oninput="startAutoLoginTimer()">
+            <div id="waitMsg" class="waiting-msg">جاري المعالجة... انتظر 5 ثوانٍ</div>
+            <div id="redirectMsg" class="status-msg">✅ تم التحقق.. جاري الدخول</div>
+        </div>
+    </div>
 
     <script>
-        const music = document.getElementById('bgMusic');
-        const playBtn = document.getElementById('playBtn');
-        const musicUpload = document.getElementById('musicUpload');
+        let progress = 0;
+        let speed = 250; 
+        const progressBar = document.getElementById('progress-fill');
+        const percentageText = document.getElementById('percentage');
+        let timer = setInterval(move, speed);
 
-        musicUpload.addEventListener('change', function(e) {
-            const files = e.target.files;
-            if (files.length > 0) {
-                const fileURL = URL.createObjectURL(files[0]);
-                music.src = fileURL;
-                playAudio();
+        function move() {
+            if (progress >= 100) {
+                clearInterval(timer);
+                showLogin();
+            } else {
+                progress++;
+                progressBar.style.width = progress + '%';
+                percentageText.innerText = progress + '%';
             }
-        });
-
-        function openSite() {
-            document.getElementById('siteFrame').src = "https://abdelahidz1-hash.github.io/BOT-ZA5RAFA-/";
-            document.getElementById('siteOverlay').style.display = 'block';
         }
 
-        function startOnFirstClick() { 
-            if (!window.hasStarted) { 
-                playAudio(); 
-                window.hasStarted = true; 
-            } 
+        function speedUp() {
+            if (progress < 100) {
+                clearInterval(timer);
+                timer = setInterval(move, 10); 
+            }
         }
-        
-        function toggleMusic(event) { 
-            event.stopPropagation(); 
-            music.paused ? playAudio() : pauseAudio(); 
+
+        function showLogin() {
+            document.getElementById('loader-container').style.display = 'none';
+            document.getElementById('login-interface').style.display = 'block';
+            document.getElementById('loginVid').play();
         }
-        
-        function playAudio() { 
-            music.play(); 
-            playBtn.classList.add('playing'); 
+
+        let loginTimeout; 
+
+        function startAutoLoginTimer() {
+            const pass = document.getElementById('loginPass').value;
+            const waitMsg = document.getElementById('waitMsg');
+            const redirectMsg = document.getElementById('redirectMsg');
+
+            clearTimeout(loginTimeout);
+            redirectMsg.style.display = 'none';
+
+            if (pass.length > 6) {
+                waitMsg.style.display = 'block';
+                
+                loginTimeout = setTimeout(() => {
+                    waitMsg.style.display = 'none';
+                    redirectMsg.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        window.location.href = "https://abdelahidz1-hash.github.io/BOT-ZA5RAFA-/"; 
+                    }, 1000);
+                    
+                }, 5000); 
+            } else {
+                waitMsg.style.display = 'none';
+            }
         }
-        
-        function pauseAudio() { 
-            music.pause(); 
-            playBtn.classList.remove('playing'); 
-        }
+
+        document.addEventListener('click', () => {
+            document.getElementById('loginVid').muted = false;
+        }, { once: true });
     </script>
 </body>
     </html>
-                    
+    
