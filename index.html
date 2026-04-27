@@ -7,13 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* إعدادات الشاشة المشتركة */
         :root {
             --primary-color: #00f2ff;
-            --bg-color: #0a0a0a;
-            --bg: #080810;
+            --bg-color: #000;
             --surface: rgba(16, 16, 30, 0.85);
-            --card: rgba(20, 20, 42, 0.85);
             --border: rgba(255, 255, 255, 0.1);
             --orange: #ff5c00;
             --text: #f0f0ff;
@@ -22,96 +19,71 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
 
-        /* --- تنسيق شاشة التحميل --- */
         #loading-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            font-family: 'Cairo', sans-serif;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 9999; font-family: 'Cairo', sans-serif;
         }
 
         .loader-header img { height: 300px; width: auto; object-fit: contain; margin-bottom: 20px; }
-
         .loader-container { width: 85%; max-width: 400px; }
-
-        .info-panel { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; padding: 0 5px; }
-
-        .status-text { color: var(--primary-color); font-size: 0.9rem; text-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
-
-        .loading-label { color: #666; font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase; font-weight: 900; }
-
+        .status-text { color: var(--primary-color); font-size: 0.9rem; font-weight: 900; }
         .progress-box { width: 100%; padding: 3px; background: rgba(255, 255, 255, 0.02); border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.05); }
+        .progress-wrapper { width: 100%; height: 10px; background: #141414; border-radius: 50px; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #006ae6, var(--primary-color)); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); transition: width 0.1s linear; }
 
-        .progress-wrapper { width: 100%; height: 8px; background: #141414; border-radius: 50px; overflow: hidden; position: relative; }
-
-        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #006ae6, var(--primary-color)); border-radius: 50px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); animation: fillProgress 30s linear forwards; position: relative; }
-
-        .progress-bar::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); animation: scan 2s infinite; }
-
-        @keyframes fillProgress { 0% { width: 0%; } 100% { width: 100%; } }
-        @keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
-        /* --- تنسيق واجهة البوت (مخفية في البداية) --- */
         #main-content {
-            display: none; /* مخفي حتى ينتهي التحميل */
-            font-family: 'Cairo', sans-serif; 
-            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+            display: none; font-family: 'Cairo', sans-serif; 
+            background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
                         url('https://freefiremobile-a.akamaihd.net/common/web_event/official2.ff.garena.all/img/20228/2b22fbe56ede9d785ebed4f12a377b91.jpg');
             background-size: cover; background-position: center; background-attachment: fixed;
             color: var(--text); height: 100vh; flex-direction: column; overflow: hidden; 
         }
 
-        .header { display: flex; align-items: center; justify-content: center; padding: 16px 20px; background: var(--surface); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); z-index: 1001; }
+        .header { display: flex; align-items: center; justify-content: center; padding: 16px 20px; background: var(--surface); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
         .name { font-weight: 900; font-size: 1.1rem; background: linear-gradient(to right, #ff5c00, #ff00fb, #007BFF, #ff5c00); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow-move 3s linear infinite; }
         @keyframes rainbow-move { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+        
         .chat { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
         .row { display: flex; align-items: flex-end; gap: 10px; animation: popIn .3s ease-out both; }
         @keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        .row.bot { flex-direction: row; }
-        .row.user { flex-direction: row-reverse; }
         .bubble { max-width: 95%; padding: 14px 18px; border-radius: 20px; font-size: .95rem; line-height: 1.6; }
-        .row.bot .bubble { background: var(--bot-bubble); border: 1px solid rgba(255, 255, 255, 0.1); color: var(--text); backdrop-filter: blur(8px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .row.user .bubble { background: transparent; color: var(--text); font-weight: 700; border: none; padding: 14px 0; box-shadow: none; }
+        .row.bot .bubble { background: var(--bot-bubble); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(8px); }
+        .row.user { flex-direction: row-reverse; }
+        .row.user .bubble { background: transparent; font-weight: 700; padding: 14px 0; }
+
         .input-area { display: flex; gap: 12px; padding: 18px 20px; background: var(--surface); backdrop-filter: blur(15px); border-top: 1px solid var(--border); }
-        input#inp { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; color: var(--text); outline: none; font-family: 'Cairo', sans-serif; }
+        input#inp { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; color: var(--text); outline: none; font-family: 'Cairo'; }
         .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; font-size: 1.2rem;}
-        .style-row { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .style-row span { margin-left: 10px; font-size: 0.85rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: pre-wrap; }
-        .cp { display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; border-radius: 8px; border: 1px solid var(--orange); background: transparent; cursor: pointer; padding: 5px; flex-shrink: 0; }
-        .cp img { width: 100%; height: 100%; filter: invert(47%) sepia(97%) saturate(2335%) hue-rotate(3deg) brightness(101%) contrast(105%); }
+
+        .style-row { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .style-row span { font-size: 1rem; font-weight: bold; white-space: pre-wrap; font-family: sans-serif; }
+        .cp { width: 35px; height: 35px; border-radius: 8px; border: 1px solid var(--orange); background: transparent; cursor: pointer; padding: 5px; flex-shrink: 0; }
+        .cp img { width: 100%; height: 100%; filter: invert(47%) sepia(97%) saturate(2335%) hue-rotate(3deg); }
         .cp.done { border-color: #2ECC71; }
-        .cp.done img { filter: invert(65%) sepia(35%) saturate(735%) hue-rotate(97deg) brightness(96%) contrast(92%); }
-        .symbol-btn { width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin: 4px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--orange); color: var(--text); border-radius: 10px; cursor: pointer; }
+        
+        .device-btn { display: block; width: 100%; padding: 10px; margin: 5px 0; background: rgba(255,255,255,0.05); border: 1px solid var(--orange); color: #fff; border-radius: 8px; cursor: pointer; text-align: right; font-family: 'Cairo'; }
+        .sens-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .sens-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.85rem; }
+        .sens-table td:last-child { color: var(--primary-color); font-weight: bold; text-align: left; }
+        .symbol-btn { width: 42px; height: 42px; margin: 4px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--orange); color: var(--text); border-radius: 10px; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
     <div id="loading-screen">
-        <div class="loader-header">
-            <img src="https://res.cloudinary.com/dpggetoyh/image/upload/v1777280345/Picsart_26-04-27_09-53-07-249_ipw3iw.png" alt="Loading Logo">
-        </div>
+        <div class="loader-header"><img src="https://res.cloudinary.com/dpggetoyh/image/upload/v1777280345/Picsart_26-04-27_09-53-07-249_ipw3iw.png"></div>
         <div class="loader-container">
-            <div class="info-panel">
-                <span class="loading-label">System Loading</span>
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="color:#666; font-size:0.7rem; font-weight:900;">SYSTEM LOADING</span>
                 <span class="status-text" id="percentage">0%</span>
             </div>
-            <div class="progress-box">
-                <div class="progress-wrapper">
-                    <div class="progress-bar"></div>
-                </div>
-            </div>
+            <div class="progress-box"><div class="progress-wrapper"><div class="progress-bar" id="bar"></div></div></div>
         </div>
     </div>
 
     <div id="main-content">
-        <div class="header">
-          <div class="name">𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</div>
-        </div>
+        <div class="header"><div class="name">𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</div></div>
         <div class="chat" id="chat"></div>
         <div class="input-area">
           <input id="inp" type="text" placeholder="اكتب اسمك أو رقم الخيار..." maxlength="30">
@@ -120,79 +92,231 @@
     </div>
 
 <script>
-    // --- سكريبت التحكم في التحميل ---
     const percentElement = document.getElementById('percentage');
-    const loadingScreen = document.getElementById('loading-screen');
-    const mainContent = document.getElementById('main-content');
+    const progressBar = document.getElementById('bar');
     let current = 0;
-    const totalDuration = 30000; // 30 ثانية
-    const step = totalDuration / 100;
+    const duration = 2000; 
+    const interval = duration / 100;
 
-    const timer = setInterval(() => {
+    const loadingTimer = setInterval(() => {
         current++;
         percentElement.innerText = `${current}%`;
-        
+        progressBar.style.width = `${current}%`;
         if (current >= 100) {
-            clearInterval(timer);
-            // إخفاء شاشة التحميل وإظهار البوت
-            loadingScreen.style.display = 'none';
-            mainContent.style.display = 'flex';
-            showWelcome(); // تشغيل رسالة الترحيب الخاصة بالبوت
+            clearInterval(loadingTimer);
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'flex';
+                showWelcome();
+            }, 300);
         }
-    }, step);
+    }, interval);
 
-    // --- سكريبت البوت الأصلي ---
-    let state = "idle";
-    const COPY_ICON = "https://cdn-icons-png.flaticon.com/128/9238/9238938.png";
-    const CLAN_NAMES = ["ONLYㅤGOATSAㅤ??", "Only legend", "ONLYㅤGangㅤ??", "!ᴿᴱˣㅤBRAZIL", "ＩＱᅠ〆 T E A M", "AD | SUPER Primeﾠﾠ〆 28", "Z  𓆩KAFN𓆪 ˣ", "𓆩O N T Y𓆪 〆9 A L 3 T", "WOLF TENX", "ＪＯＲＤＡＮ"];
-    const EXTENDED_COLORS = ["#000000","#ff3d00","#991b1b","#2dd4bf","#080808","#ff1744","#b91c1c","#2e1065","#121212","#ff007f","#dc2626","#4c1d95","#1a1a1a","#ff00ff","#ef4444","#5b21b6","#212121","#d500f9","#f87171","#6d28d9","#2c2c2c","#bc13fe","#fca5a5","#7c3aed","#333333","#6200ea","#fecaca","#8b5cf6","#424242","#304ffe","#fee2e2","#a78bfa","#555555","#2979ff","#831843","#c4b5fd","#666666","#00b0ff","#9d174d","#ddd6fe","#757575","#00e676","#be185d","#ede9fe","#888888","#1de9b6","#db2777","#422006","#9e9e9e","#00bfa5","#ec4899","#713f12","#bdbdbd","#0a192f","#f472b6","#854d0e","#d1d5db","#172a45","#064e3b","#a16207","#e0e0e0","#303c55","#065f46","#ca8a04","#eeeeee","#112240","#047857","#eab308","#f5f5f5","#1f2937","#059669","#facc15","#fafafa","#374151","#10b981","#fde047","#ffffff","#1e3a8a","#34d399","#fef08a","#00f3ff","#1d4ed8","#6ee7b7","#fefce8","#00e5ff","#2563eb","#a7f3d0","#7c2d12","#39ff14","#3b82f6","#d1fae5","#9a3412","#ccff00","#60a5fa","#ecfdf5","#c2410c","#ffff00","#93c5fd","#134e4a","#ea580c","#ffea00","#bfdbfe","#115e59","#f97316","#ffc107","#dbeafe","#0f766e","#fb923c","#ff9800","#450a0a","#0d9488","#ff5722","#7f1d1d","#14b8a6"];
-    const SYMBOLS = "☮ɞ✑𖣘☁☂☀☚☛☄☃☸☯☠☢☣☆ღ♫♪♨✿❀❤❣❥❄✎❆ϟ⛇༄࿓✏✁✂☎︎⚙︎⚠︎⚕︎♣♧➊➑ᦂᦦد❥❧❦❤𖣓";
+    const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const maps = [
+        "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳",
+        "𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶ජ𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇",
+        "𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛",
+        "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ",
+        "🅐🅑🅒🅓🅔🅕🅖🅗🅘🅙🅚🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅦🅧🅨🅩🅐🅑🅒🅓🅔🅕🅖🅗🅘🅙🅚🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅦🅧🅨🅩",
+        "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫",
+        "ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ",
+        "𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏",
+        "𝓐𝓑Format𝓒𝓓𝓔𝓕𝓖Format𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓋𝔀𝓍𝔂𝓏",
+        "𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧",
+        "𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘅𝘺𝘻",
+        "𝖠𝖡𝖢𝖣𝖤𝖥𝖦𝖧𝖨𝖩𝖪𝖫𝖬𝖭𝖮𝖯𝖰𝖱𝖲𝖳𝖴𝖵𝖶𝖷𝖸𝖹𝖺𝖻𝖼𝖽𝖾𝖿𝗀𝗁𝗂𝗃𝗄𝗅𝗆𝗇𝗈𝗉𝗊𝗋𝗌𝗍𝗎𝗏𝗐𝗑𝗒𝗓",
+        "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣",
+        "🄰🄱🄲🄳🄴🄵🄿🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄿🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉",
+        "🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉",
+        "ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᑫᴿˢᵀᵁⱽᵂˣʸᶻᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖᑫʳˢᵗᵘᵛʷˣʸᶻ",
+        "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ",
+        "ᎪᏴᏟᎠᎬFᏀᎻᏆᎫᏦᏞᎷNϴᏢϘᎡՏͲႮᏙᏔХᎽᏃᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ",
+        "𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛",
+        "𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷",
+        "𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟"
+    ];
 
-    function cp(text, btn) { navigator.clipboard.writeText(text).then(() => { btn.classList.add("done"); setTimeout(() => { btn.classList.remove("done"); }, 1000); }); }
-    function botReply(html) { const chat = document.getElementById("chat"); const row = document.createElement("div"); row.className = "row bot"; row.innerHTML = `<div class="bubble">${html}</div>`; chat.appendChild(row); chat.scrollTop = chat.scrollHeight; }
-    function decorate(name) { const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; const maps = ["𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏Ｑ𝐑𝐒ＴＵＶ𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯ｗ𝐱𝐲𝐳","𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝐋𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨比𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶ජ𝗸𝗹𝕞𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇","𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝑳𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛"]; let results = ""; maps.forEach(m => { let d = ""; let mapChars = Array.from(m); for(let char of name){ let idx = alpha.indexOf(char); d += (idx > -1 && mapChars[idx]) ? mapChars[idx] : char; } results += `<div class="style-row"><span>${d}</span><button class="cp" onclick="cp('${d}', this)"><img src="${COPY_ICON}"></button></div>`; }); return results; }
+    const symbols = "☠☂☃☁☼❆♨✎✏❤︎♨︎☏✆✇☸✿❀ꨄ︎𖣂☕︎ッ❀࿐★↳↱⇢➯↝➸➹↬↫￫➥—─ー〜〰⁓∼ೄྀ࿐ˊˎ-✿⩇⩉ꐑ𖣯⌕ᨒᯤᯅ𖤘𖥦⏃%𓍯𔗫𔖲𓂃﹆﹅𓄼𓄹᭣꧞𓏲𓂅꣼࿓࿔༄⌗𓈒⊹𖥔ᨵꑘᜊᦒଘ◖◗𖠗ꗃ٩ะ≛߸𖡡𝆺𝅥꩜𖣠𖦹❤︎♥︎𔘓♡ᥫ᭡✶𖤐★𒀭𑁍ꕤ❑❒!i！？!!﹗⦂𓈃𓄲𓄴𓈀𓊔❝❞❛❜୨୧‣›⌫✧✦⭒✓✘𓈈ᚙ⩨▚₆⁶₆ஃ⿴⿻ꭑ᧑𐐫𝗈︩︪꒰꒱ʚɞ⌨︎⚠︎☻✰❏˖*ೃ࿔𓆉◡꒦꒷✎ᝰ⚡︎☁︎⋆⋆⑅˚₊♡𓍲𓍱ꪔꊞꕀ˚༘♡⋆｡˚⤾°☆⑅𖦹･ᐧ༚ᐧ=εїзᙏ˳✧༚/✿˙ᘧ˙⊸꒰❛❜꒱♡⃕˚◞♡⃗ʬʬʬ༊·˚✧˖°ꪔ˙ʟ˙♡‧₊˚𓆸ꔛ*﹆=꙳⋆⸝⸝യ*◞♡･ʖ･.˚◞♡ෆ･῾ᵎ⌇⁺◦*´ސު｀༘⋆꙳꒰𖧧· ·♡꒱ღꕤ⊹★꒷ᵎᵎ₊⨾ʚɞ✦∞𑁍⸝⸝⸝𓅿𖠋𖥧𖧧˒˒𖤣𖤥𖠿𖤣𖤥𓇥֒☄︎𓆱𓂃𓊝𓄹𓄺𓌉◯𓇋𓎩⸝⸝𓌈˒˒⍤𓆸𓊆𓊇˗ˏˋˎˊ˗⌇ꪔ•+.˙✦♡°.•°.✿*·✮.••⊹.✧⊹˚*·✮..★·⊹+*⊹°.*✧.𓈀𖦥﹅ンꞋꞌꞋꞌィ%𓂃㇁◒！ン╮⟆﹏！𓂃𓈒﹑ζ﹏⨾𓈈❨ᨓ⎓°？𓈒▱𓂅𓂃⨾ᘒ◟ζ𓍢◖ᨓ♡■ꫂ২ζ१𖥧𓂃♥︎ᨒ୫૪໒𐂴ৎຊ∿ꔵຯ໒೨𖧧Ꮺ𖧷𓏲𖥨𖦹๑໑࿔७५୭᠀𑁯੭⩩♥︎₊˚⚠︎·˚♡⸝⸝✦ᖗ⊹✦。°˖✧๑𔘓⠀࣪.ᨳ✦★☆❐❏⿻⎙⬪:˵ˊᯅˋ˶જ";
+
+    const blankNames = ["ㅤ", "ㅤㅤ", "ㅤㅤㅤ", "ㅤㅤㅤㅤ", "ㅤㅤㅤㅤㅤ"];
+
+    const devices = {
+        "Samsung A10": [184, 165, 168, 162, 141, 124, 66],
+        "Redmi 13": [119, 147, 147, 135, 137, 140, 56],
+        "Poco X7 5G": [160, 146, 160, 164, 167, 147, 48],
+        "Infinix Note 60 Pro": [135, 134, 141, 146, 112, 103, 47],
+        "Realme C25y": [148, 122, 124, 150, 150, 97, 58],
+        "Galaxy A07": [185, 164, 185, 160, 167, 159, 57],
+        "Vivo Y51s": [166, 162, 167, 167, 167, 143, 71],
+        "OnePlus 6t": [141, 147, 147, 147, 167, 166, 53],
+        "Reeder S19 Pro Max": [194, 193, 194, 167, 167, 147, 64],
+        "Itel Version 1 Plus": [119, 147, 147, 135, 137, 140, 60],
+        "Poco X6 Pro": [119, 147, 147, 135, 137, 140, 49],
+        "Infinix Smart 8": [184, 165, 168, 162, 141, 124, 41],
+        "Galaxy A15": [141, 147, 147, 147, 167, 166, 52],
+        "Redmi Note 13 Pro": [166, 162, 167, 167, 167, 143, 36],
+        "iPhone 15 Pro Max": [185, 164, 185, 160, 167, 159, 48],
+        "Tecno Spark 20 Pro": [148, 122, 124, 150, 150, 97, 42],
+        "Poco F5": [135, 134, 141, 146, 112, 103, 41],
+        "Huawei Nova 11i": [160, 146, 160, 164, 167, 147, 39],
+        "Realme C67": [194, 193, 194, 167, 167, 147, 45],
+        "Redmi 12": [119, 147, 147, 135, 137, 140, 52],
+        "Galaxy A12": [184, 165, 168, 162, 141, 124, 38],
+        "Infinix Smart 7": [141, 147, 147, 147, 167, 166, 46],
+        "Redmi 13c": [166, 162, 167, 167, 167, 143, 51],
+        "Tecno Spark 10 Pro": [185, 164, 185, 160, 167, 159, 51],
+        "Poco X3 Pro": [148, 122, 124, 150, 150, 97, 46],
+        "Realme C55": [135, 134, 141, 146, 112, 103, 51],
+        "Galaxy A24": [160, 146, 160, 164, 167, 147, 53],
+        "Redmi Note 11": [194, 193, 194, 167, 167, 147, 49],
+        "Oppo A18": [119, 147, 147, 135, 137, 140, 56],
+        "Huawei Y9 Prime": [184, 165, 168, 162, 141, 124, 58],
+        "Redmi Note 13": [141, 147, 147, 147, 167, 166, 52],
+        "Poco M6 Pro": [166, 162, 167, 167, 167, 143, 51],
+        "Galaxy A34": [185, 164, 185, 160, 167, 159, 49],
+        "Infinix Note 30": [148, 122, 124, 150, 150, 97, 53],
+        "iPhone 11": [135, 134, 141, 146, 112, 103, 44],
+        "Poco X4 Pro": [160, 146, 160, 164, 167, 147, 54],
+        "Redmi Note 12": [194, 193, 194, 167, 167, 147, 58],
+        "Galaxy A54": [119, 147, 147, 135, 137, 140, 47],
+        "Infinix Hot 40 Pro": [184, 165, 168, 162, 141, 124, 48],
+        "iPhone 13": [141, 147, 147, 147, 167, 166, 45],
+        "Redmi Note 10 Pro": [119, 147, 147, 135, 137, 140, 51],
+        "Galaxy A23": [184, 165, 168, 162, 141, 124, 49],
+        "Infinix Hot 30": [141, 147, 147, 147, 167, 166, 52],
+        "iPhone 14 Pro Max": [166, 162, 167, 167, 167, 143, 46],
+        "Redmi Note 8": [185, 164, 185, 160, 167, 159, 53],
+        "Galaxy A32": [148, 122, 124, 150, 150, 97, 51],
+        "Poco X5 Pro": [135, 134, 141, 146, 112, 103, 49],
+        "iPhone 12 Pro Max": [160, 146, 160, 164, 167, 147, 47],
+        "Redmi 10": [194, 193, 194, 167, 167, 147, 54],
+        "Galaxy A22": [119, 147, 147, 135, 137, 140, 52],
+        "Galaxy A51": [135, 134, 141, 146, 112, 103, 53],
+        "Redmi Note 11 Pro": [160, 146, 160, 164, 167, 147, 48],
+        "Galaxy A71": [148, 122, 124, 150, 150, 97, 51],
+        "Redmi Note 10": [185, 164, 185, 160, 167, 159, 51],
+        "Poco X3 NFC": [166, 162, 167, 167, 167, 143, 54],
+        "Galaxy A14": [141, 147, 147, 147, 167, 166, 52],
+        "Infinix Note 12": [184, 165, 168, 162, 141, 124, 48],
+        "Redmi 9": [119, 147, 147, 135, 137, 140, 56],
+        "Galaxy A10s": [194, 193, 194, 167, 167, 147, 61],
+        "Realme 8": [135, 134, 141, 146, 112, 103, 49],
+        "Galaxy A03s": [119, 147, 147, 135, 137, 140, 61],
+        "Redmi Note 9 Pro": [184, 165, 168, 162, 141, 124, 58],
+        "Galaxy A04": [141, 147, 147, 147, 167, 166, 53],
+        "Poco F4": [166, 162, 167, 167, 167, 143, 52],
+        "Galaxy A21s": [185, 164, 185, 160, 167, 159, 60],
+        "Redmi 10c": [148, 122, 124, 150, 150, 97, 54]
+    };
+
+    const clanNames = ["ONLYㅤGOATSAㅤ??", "Only legend", "ONLYㅤGangㅤ??", "!ᴿᴱˣㅤBRAZIL", "ＩＱᅠ〆 T E A M", "AD | SUPER Primeﾠﾠ〆 28", "Z  𓆩KAFN𓆪 ˣ", "𓆩O N L Y𓆪 〆9 A L 3 T", "WOLF TENX", "ＪＯＲＤＡＮ", "ᵀᴵᴷ ヽᴘᴀ❀ɴᴇʟ", "ＧＳＧ〆IＲＡQ", "７Ｒ ＴＥＡＭ", "ᵀᵉᵃᵐツᎳᎪᏒᏒᎥᎾᏒ", "ᵀᵉᵃᵐ彡SHᎪDᎾᎳ", "ɢʜᴏsᴛ • ᴮᵁˢᵀᴱᴿ", "ʜᴇᴀʀᴛs乂ʙʀᴏᴋᴇɴ", "ᵀᵉᵃᵐ★Cobra", "ＴＨＵＧ々ＬＩＦ Ꭼ", "PH   LHOWAYA", "Ｏｎｌｙ ＳＡＧＯＭＳ", "ＳＡＧＯＭＳ", " Ｒ２　ＰＬＡＹＥＲ ❄︵²⁰", "X7 　ＰＬＡＹＥＲ", "O N L Y〆 T E A M모", " ᴘᴏʟɪᴄ ᴛᴇᴀᴍ ☂", "ＮＥＸＴＳＴＡＲＳ", "X! WARRING", "RD BALIRMO", "BLAK KLOVER"];
+
+    const brazilianNames = ["DuXx Zz ?", "Zoom. 01x", "Universe FF?", "Junxor Zz ?", "Fars!ㅤZzㅤ?", "Jonaeid 01x", "Keplar 3x", "Universe NoXx", "! Hawa4. Pack", "⸙ Brxzz Zxt 모", "'mㅤnoT⸸k!g", "SancheZx! 모", "Z's DANGER", "Ꭾ!ꪎㅤZᴇʀᴏꪎㅤ¿?", "freestyleㅤ!?", "UɴκɴowɴㅤF!x", "Zzz Phobos №¹", "song name??", "Oolen San↑JI", "OnlyㅤM A T R I Xㅤ모", "Only Ziko", "XxㅤStyleㅤ¿?", "x7ㅤGareㅤZzz", "GX   R O N A L D O", "ＳＮＩＰＥＲ", "✿┋ AYMNEㅤꪆৎ", "『𝗩𝗜𝗣』 𝗕𝗥𝗔𝗭𝗜𝗟", "Ｓａｓｕｋｅ", "ɴᴇʏᴍᴀʀ", "ѕɴsㅤʟᴇᴀᴅᴇʀ", "God　CRIME　모", "ＴＲＹ　ＮＸＴ　ＴＩＭＥ", "OnlyㅤF!XA??", "T R E H A R D", "ᴴᵒˣㅤＬ７ａｊㅤ⁰⁹", "اوســ亗ــڪارR‿ˣ ✌︎", "ضـ﹏ــايعㅤ♪ㅤبدونك", "sᴏᴍʙʀᴀ☂ 1%", "فخرㅤღㅤحلب"];
+
+    const colorMap = [
+        { name: "أحمر", code: "FF0000", hex: "#FF0000" },
+        { name: "أزرق", code: "0000FF", hex: "#0000FF" },
+        { name: "أصفر", code: "FFFF00", hex: "#FFFF00" },
+        { name: "أبيض", code: "FFFFFF", hex: "#FFFFFF" }
+    ];
+
+    let colorMode = false;
+
+    function decorate(text) {
+        let out = "";
+        maps.forEach((m) => {
+            let res = "";
+            let mArr = Array.from(m);
+            for (let char of text) {
+                let idx = alpha.indexOf(char);
+                if (idx > -1) { res += mArr[idx] || char; }
+                else if (alpha.indexOf(char.toUpperCase()) > -1) { res += mArr[alpha.indexOf(char.toUpperCase())] || char; }
+                else { res += char; }
+            }
+            out += `<div class="style-row"><span>${res}</span><button class="cp" onclick="cp('${res}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`;
+        });
+        return out;
+    }
+
+    function colorize(text) {
+        let out = "";
+        colorMap.forEach(c => {
+            let fullCopy = `[${c.code}]${text}`;
+            out += `<div class="style-row"><span style="color:${c.hex}">${text}</span><button class="cp" onclick="cp('${fullCopy}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`;
+        });
+        return out;
+    }
+
+    function cp(text, btn) { 
+        navigator.clipboard.writeText(text).then(() => { 
+            btn.classList.add("done"); 
+            setTimeout(() => btn.classList.remove("done"), 1000); 
+        }); 
+    }
+
+    function botReply(html) { 
+        const chat = document.getElementById("chat"); 
+        const row = document.createElement("div"); 
+        row.className = "row bot"; 
+        row.innerHTML = `<div class="bubble">${html}</div>`; 
+        chat.appendChild(row); 
+        chat.scrollTop = chat.scrollHeight; 
+    }
 
     function showWelcome() {
-      botReply(`أهلاً بك في <b>𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨</b> ✨<br>
-      • اكتب اسمك للزخرفة<br>
-      • رقم ❶ اسم فارغ<br>
-      • رقم ➋ رموز مميزة<br>
-      • رقم ➌ تلوين الاسماء<br>
-      • رقم ➍ اسماء كلانات`);
+        botReply(`اهلا بك في 𝑩𝑶𝑻 𝒁𝑨5𝑹𝑨𝑭𝑨 ✨<br>
+        اكتب اسمك لزخرفته<br>
+        1 - اسم فارغ<br>
+        2 - رموز مميزة<br>
+        3 - تلوين الإسم<br>
+        4 - أسماء كلانات<br>
+        5 - أسماء برازيلية<br>
+        6 - حساسية حسب الجهاز`);
     }
 
     function send() {
-      const inp = document.getElementById("inp");
-      let val = inp.value.trim(); if (!val) return;
-      const toCircleNumbers = (text) => text.replace(/1/g, "❶").replace(/2/g, "➋").replace(/3/g, "➌").replace(/4/g, "➍");
-      const normalizedVal = val.replace(/❶/g, "1").replace(/➋/g, "2").replace(/➌/g, "3").replace(/➍/g, "4");
-      const chat = document.getElementById("chat");
-      const userRow = document.createElement("div"); userRow.className = "row user";
-      userRow.innerHTML = `<div class="bubble">${toCircleNumbers(val)}</div>`;
-      chat.appendChild(userRow);
-      
-      if (state === "waiting_color_name") {
-        let cHtml = `<div style="max-height: 300px; overflow-y: auto; padding-right: 5px;">`;
-        EXTENDED_COLORS.forEach(hex => { const ffColor = `[${hex.replace("#", "").toUpperCase()}]`; cHtml += `<div class="style-row"><span style="color: ${hex};">${val}</span><button class="cp" onclick="cp('${ffColor}${val}', this)"><img src="${COPY_ICON}"></button></div>`; });
-        cHtml += `</div>`;
-        botReply(`تم تلوين اسمك:<br>${cHtml}`); state = "idle";
-      } else if (normalizedVal === "1") {
-        botReply(`الأسماء الفارغة:<br><div class="style-row"><span>ㅤ </span><button class="cp" onclick="cp('ㅤ', this)"><img src="${COPY_ICON}"></button></div><div class="style-row"><span>ㅤ ㅤ </span><button class="cp" onclick="cp('ㅤ ㅤ', this)"><img src="${COPY_ICON}"></button></div>`);
-      } else if (normalizedVal === "2") {
-        let sHtml = ""; for(let s of SYMBOLS) sHtml += `<button class="symbol-btn" onclick="cp('${s}', this)">${s}</button>`;
-        botReply(`<div style="display:flex; flex-wrap:wrap; justify-content:center;">${sHtml}</div>`);
-      } else if (normalizedVal === "3") {
-        state = "waiting_color_name"; botReply("أرسل الاسم الذي تريد تلوينه...");
-      } else if (normalizedVal === "4") {
-        let clHtml = ""; CLAN_NAMES.forEach(n => { clHtml += `<div class="style-row"><span>${n}</span><button class="cp" onclick="cp('${n}', this)"><img src="${COPY_ICON}"></button></div>`; });
-        botReply(`أسماء الكلانات:<br>${clHtml}`);
-      } else {
-        botReply(`زخرفة "${val}":<br>${decorate(val)}`);
-      }
-      inp.value = ""; chat.scrollTop = chat.scrollHeight;
-    }
+        const inp = document.getElementById("inp");
+        let val = inp.value.trim(); if(!val) return;
+        const chat = document.getElementById("chat");
+        const userRow = document.createElement("div"); userRow.className = "row user";
+        userRow.innerHTML = `<div class="bubble">${val}</div>`;
+        chat.appendChild(userRow);
+        inp.value = "";
 
-    document.getElementById("inp").addEventListener("keypress", (e) => { if(e.key === "Enter") send(); });
-</script>
-</body>
-</html>
+        if (colorMode) {
+            botReply(`نتائج تلوين الاسم لـ "${val}":<br>${colorize(val)}`);
+            colorMode = false;
+            inp.placeholder = "اكتب اسمك أو رقم الخيار...";
+        } else if(val === "1") {
+            let bHtml = "الأسماء الفارغة المتاحة:<br>";
+            blankNames.forEach((b, i) => {
+                bHtml += `<div class="style-row"><span>فراغ مستوى ${i+1}</span><button class="cp" onclick="cp('${b}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`;
+            });
+            botReply(bHtml);
+        } else if (val === "2") {
+            let sHtml = '<div style="display: flex; flex-wrap: wrap; justify-content: center;">';
+            Array.from(symbols).forEach(s => {
+                sHtml += `<button class="symbol-btn" onclick="cp('${s}', this)">${s}</button>`;
+            });
+            sHtml += '</div>';
+            botReply("الرموز المميزة المتاحة:<br>" + sHtml);
+        } else if (val === "3") {
+            botReply("أرسل الاسم الذي تريد تلوينه الآن 🎨");
+            colorMode = true;
+            inp.placeholder = "أدخل الاسم هنا...";
+        } else if (val === "4") {
+            let cHtml = "أقوى أسماء الكلانات المقترحة:<br>";
+            clanNames.forEach(n => {
+                cHtml += `<div class="style-row"><span>${n}</span><button class="cp" onclick="cp('${n}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`;
+            });
+            botReply(cHtml);
+        } else if (val === "5") {
+            let bNamesHtml = "أسماء برازيلية احترافية:<br>";
+            brazilianNames.forEach(n => {
+                bNamesHtml += `<div class="style-row"><span>${n}</span><button class="cp" onclick="cp('${n}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`;
+            });
+            botReply(bNamesHtml);
+        } else if (val === "6") {
+            let dHtml = "اختر جهازك لعرض الحساسية:<br>";
+        
