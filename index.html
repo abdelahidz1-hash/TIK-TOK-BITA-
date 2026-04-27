@@ -19,18 +19,20 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s; }
 
+        /* شاشة التحميل المحسنة */
         #loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color); display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 9999; font-family: 'Cairo', sans-serif;
+            transition: opacity 0.5s ease, visibility 0.5s;
         }
 
-        .loader-header img { height: 300px; width: auto; object-fit: contain; margin-bottom: 20px; }
+        .loader-header img { height: 250px; width: auto; object-fit: contain; margin-bottom: 20px; }
         .loader-container { width: 85%; max-width: 400px; }
         .status-text { color: var(--primary-color); font-size: 0.9rem; font-weight: 900; }
         .progress-box { width: 100%; padding: 3px; background: rgba(255, 255, 255, 0.02); border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.05); }
         .progress-wrapper { width: 100%; height: 10px; background: #141414; border-radius: 50px; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #006ae6, var(--primary-color)); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); transition: width 0.1s linear; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #006ae6, var(--primary-color)); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); transition: width 0.2s ease-out; }
 
         #main-content {
             display: none; font-family: 'Cairo', sans-serif; 
@@ -40,6 +42,7 @@
             color: var(--text); height: 100vh; flex-direction: column; overflow: hidden; 
         }
 
+        /* تنسيقات الرأس والدردشة */
         .header { display: flex; align-items: center; justify-content: center; padding: 16px 20px; background: var(--surface); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
         .name { font-weight: 900; font-size: 1.1rem; background: linear-gradient(to right, #ff5c00, #ff00fb, #007BFF, #ff5c00); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow-move 3s linear infinite; }
         @keyframes rainbow-move { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
@@ -72,7 +75,7 @@
 <body>
 
     <div id="loading-screen">
-        <div class="loader-header"><img src="https://res.cloudinary.com/dpggetoyh/image/upload/v1777280345/Picsart_26-04-27_09-53-07-249_ipw3iw.png"></div>
+        <div class="loader-header"><img src="https://res.cloudinary.com/dpggetoyh/image/upload/v1777280345/Picsart_26-04-27_09-53-07-249_ipw3iw.png" alt="Logo"></div>
         <div class="loader-container">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
                 <span style="color:#666; font-size:0.7rem; font-weight:900;">SYSTEM LOADING</span>
@@ -92,25 +95,32 @@
     </div>
 
 <script>
-    const percentElement = document.getElementById('percentage');
-    const progressBar = document.getElementById('bar');
-    let current = 0;
-    const duration = 2000; 
-    const interval = duration / 100;
+    // نظام التحميل
+    window.addEventListener('load', () => {
+        const percentElement = document.getElementById('percentage');
+        const progressBar = document.getElementById('bar');
+        const loader = document.getElementById('loading-screen');
+        const main = document.getElementById('main-content');
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.floor(Math.random() * 5) + 2; // زيادة عشوائية للواقعية
+            if (progress > 100) progress = 100;
+            
+            percentElement.innerText = `${progress}%`;
+            progressBar.style.width = `${progress}%`;
 
-    const loadingTimer = setInterval(() => {
-        current++;
-        percentElement.innerText = `${current}%`;
-        progressBar.style.width = `${current}%`;
-        if (current >= 100) {
-            clearInterval(loadingTimer);
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('main-content').style.display = 'flex';
-                showWelcome();
-            }, 300);
-        }
-    }, interval);
+            if (progress === 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
+                    main.style.display = 'flex';
+                    showWelcome();
+                }, 500);
+            }
+        }, 30);
+    });
 
     const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     const maps = [
@@ -119,15 +129,15 @@
         "𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛",
         "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ",
         "🅐🅑🅒🅓🅔🅕🅖🅗🅘🅙🅚🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅦🅧🅨🅩🅐🅑🅒🅓🅔🅕🅖🅗🅘🅙🅚🅛🅜🅝🅞🅟🅠🅡🅢🅣🅤🅥🅦🅧🅨🅩",
-        "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫",
+        "mathbb{ABC...}", "𝔸mathbb{B}mathbb{C}mathbb{D}mathbb{E}mathbb{F}mathbb{G}mathbb{H}mathbb{I}mathbb{J}mathbb{K}mathbb{L}mathbb{M}mathbb{N}mathbb{O}mathbb{P}mathbb{Q}mathbb{R}mathbb{S}mathbb{T}mathbb{U}mathbb{V}mathbb{W}mathbb{X}mathbb{Y}mathbb{Z}mathbb{a}mathbb{b}mathbb{c}mathbb{d}mathbb{e}mathbb{f}mathbb{g}mathbb{h}mathbb{i}mathbb{j}mathbb{k}mathbb{l}mathbb{m}mathbb{n}mathbb{o}mathbb{p}mathbb{q}mathbb{r}mathbb{s}mathbb{t}mathbb{u}mathbb{v}mathbb{w}mathbb{x}mathbb{y}mathbb{z}",
         "ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ",
         "𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏",
-        "𝓐𝓑Format𝓒𝓓𝓔𝓕𝓖Format𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓋𝔀𝓍𝔂𝓏",
+        "𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓋𝔀𝓍𝔂𝓏",
         "𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧",
-        "𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘅𝘺𝘻",
+        "𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦實𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘅𝘺𝘻",
         "𝖠𝖡𝖢𝖣𝖤𝖥𝖦𝖧𝖨𝖩𝖪𝖫𝖬𝖭𝖮𝖯𝖰𝖱𝖲𝖳𝖴𝖵𝖶𝖷𝖸𝖹𝖺𝖻𝖼𝖽𝖾𝖿𝗀𝗁𝗂𝗃𝗄𝗅𝗆𝗇𝗈𝗉𝗊𝗋𝗌𝗍𝗎𝗏𝗐𝗑𝗒𝗓",
         "𝙰𝙱𝙲𝙳𝙴𝙵𝙶𝙷𝙸𝙹𝙺𝙻𝙼𝙽𝙾𝙿𝚀𝚁𝚂𝚃𝚄𝚅𝚆𝚇𝚈𝚉𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔𝚕𝚖𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣",
-        "🄰🄱🄲🄳🄴🄵🄿🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄿🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉",
+        "🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉",
         "🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉",
         "ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᑫᴿˢᵀᵁⱽᵂˣʸᶻᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖᑫʳˢᵗᵘᵛʷˣʸᶻ",
         "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ",
@@ -138,88 +148,10 @@
     ];
 
     const symbols = "☠☂☃☁☼❆♨✎✏❤︎♨︎☏✆✇☸✿❀ꨄ︎𖣂☕︎ッ❀࿐★↳↱⇢➯↝➸➹↬↫￫➥—─ー〜〰⁓∼ೄྀ࿐ˊˎ-✿⩇⩉ꐑ𖣯⌕ᨒᯤᯅ𖤘𖥦⏃%𓍯𔗫𔖲𓂃﹆﹅𓄼𓄹᭣꧞𓏲𓂅꣼࿓࿔༄⌗𓈒⊹𖥔ᨵꑘᜊᦒଘ◖◗𖠗ꗃ٩ะ≛߸𖡡𝆺𝅥꩜𖣠𖦹❤︎♥︎𔘓♡ᥫ᭡✶𖤐★𒀭𑁍ꕤ❑❒!i！？!!﹗⦂𓈃𓄲𓄴𓈀𓊔❝❞❛❜୨୧‣›⌫✧✦⭒✓✘𓈈ᚙ⩨▚₆⁶₆ஃ⿴⿻ꭑ᧑𐐫𝗈︩︪꒰꒱ʚɞ⌨︎⚠︎☻✰❏˖*ೃ࿔𓆉◡꒦꒷✎ᝰ⚡︎☁︎⋆⋆⑅˚₊♡𓍲𓍱ꪔꊞꕀ˚༘♡⋆｡˚⤾°☆⑅𖦹･ᐧ༚ᐧ=εїзᙏ˳✧༚/✿˙ᘧ˙⊸꒰❛❜꒱♡⃕˚◞♡⃗ʬʬʬ༊·˚✧˖°ꪔ˙ʟ˙♡‧₊˚𓆸ꔛ*﹆=꙳⋆⸝⸝യ*◞♡･ʖ･.˚◞♡ෆ･῾ᵎ⌇⁺◦*´ސު｀༘⋆꙳꒰𖧧· ·♡꒱ღꕤ⊹★꒷ᵎᵎ₊⨾ʚɞ✦∞𑁍⸝⸝⸝𓅿𖠋𖥧𖧧˒˒𖤣𖤥𖠿𖤣𖤥𓇥֒☄︎𓆱𓂃𓊝𓄹𓄺𓌉◯𓇋𓎩⸝⸝𓌈˒˒⍤𓆸𓊆𓊇˗ˏˋˎˊ˗⌇ꪔ•+.˙✦♡°.•°.✿*·✮.••⊹.✧⊹˚*·✮..★·⊹+*⊹°.*✧.𓈀𖦥﹅ンꞋꞌꞋꞌィ%𓂃㇁◒！ン╮⟆﹏！𓂃𓈒﹑ζ﹏⨾𓈈❨ᨓ⎓°？𓈒▱𓂅𓂃⨾ᘒ◟ζ𓍢◖ᨓ♡■ꫂ২ζ१𖥧𓂃♥︎ᨒ୫૪໒𐂴ৎຊ∿ꔵຯ໒೨𖧧Ꮺ𖧷𓏲𖥨𖦹๑໑࿔७५୭᠀𑁯੭⩩♥︎₊˚⚠︎·˚♡⸝⸝✦ᖗ⊹✦。°˖✧๑𔘓⠀࣪.ᨳ✦★☆❐❏⿻⎙⬪:˵ˊᯅˋ˶જ";
-
     const blankNames = ["ㅤ", "ㅤㅤ", "ㅤㅤㅤ", "ㅤㅤㅤㅤ", "ㅤㅤㅤㅤㅤ"];
-
-    const devices = {
-        "Samsung A10": [184, 165, 168, 162, 141, 124, 66],
-        "Redmi 13": [119, 147, 147, 135, 137, 140, 56],
-        "Poco X7 5G": [160, 146, 160, 164, 167, 147, 48],
-        "Infinix Note 60 Pro": [135, 134, 141, 146, 112, 103, 47],
-        "Realme C25y": [148, 122, 124, 150, 150, 97, 58],
-        "Galaxy A07": [185, 164, 185, 160, 167, 159, 57],
-        "Vivo Y51s": [166, 162, 167, 167, 167, 143, 71],
-        "OnePlus 6t": [141, 147, 147, 147, 167, 166, 53],
-        "Reeder S19 Pro Max": [194, 193, 194, 167, 167, 147, 64],
-        "Itel Version 1 Plus": [119, 147, 147, 135, 137, 140, 60],
-        "Poco X6 Pro": [119, 147, 147, 135, 137, 140, 49],
-        "Infinix Smart 8": [184, 165, 168, 162, 141, 124, 41],
-        "Galaxy A15": [141, 147, 147, 147, 167, 166, 52],
-        "Redmi Note 13 Pro": [166, 162, 167, 167, 167, 143, 36],
-        "iPhone 15 Pro Max": [185, 164, 185, 160, 167, 159, 48],
-        "Tecno Spark 20 Pro": [148, 122, 124, 150, 150, 97, 42],
-        "Poco F5": [135, 134, 141, 146, 112, 103, 41],
-        "Huawei Nova 11i": [160, 146, 160, 164, 167, 147, 39],
-        "Realme C67": [194, 193, 194, 167, 167, 147, 45],
-        "Redmi 12": [119, 147, 147, 135, 137, 140, 52],
-        "Galaxy A12": [184, 165, 168, 162, 141, 124, 38],
-        "Infinix Smart 7": [141, 147, 147, 147, 167, 166, 46],
-        "Redmi 13c": [166, 162, 167, 167, 167, 143, 51],
-        "Tecno Spark 10 Pro": [185, 164, 185, 160, 167, 159, 51],
-        "Poco X3 Pro": [148, 122, 124, 150, 150, 97, 46],
-        "Realme C55": [135, 134, 141, 146, 112, 103, 51],
-        "Galaxy A24": [160, 146, 160, 164, 167, 147, 53],
-        "Redmi Note 11": [194, 193, 194, 167, 167, 147, 49],
-        "Oppo A18": [119, 147, 147, 135, 137, 140, 56],
-        "Huawei Y9 Prime": [184, 165, 168, 162, 141, 124, 58],
-        "Redmi Note 13": [141, 147, 147, 147, 167, 166, 52],
-        "Poco M6 Pro": [166, 162, 167, 167, 167, 143, 51],
-        "Galaxy A34": [185, 164, 185, 160, 167, 159, 49],
-        "Infinix Note 30": [148, 122, 124, 150, 150, 97, 53],
-        "iPhone 11": [135, 134, 141, 146, 112, 103, 44],
-        "Poco X4 Pro": [160, 146, 160, 164, 167, 147, 54],
-        "Redmi Note 12": [194, 193, 194, 167, 167, 147, 58],
-        "Galaxy A54": [119, 147, 147, 135, 137, 140, 47],
-        "Infinix Hot 40 Pro": [184, 165, 168, 162, 141, 124, 48],
-        "iPhone 13": [141, 147, 147, 147, 167, 166, 45],
-        "Redmi Note 10 Pro": [119, 147, 147, 135, 137, 140, 51],
-        "Galaxy A23": [184, 165, 168, 162, 141, 124, 49],
-        "Infinix Hot 30": [141, 147, 147, 147, 167, 166, 52],
-        "iPhone 14 Pro Max": [166, 162, 167, 167, 167, 143, 46],
-        "Redmi Note 8": [185, 164, 185, 160, 167, 159, 53],
-        "Galaxy A32": [148, 122, 124, 150, 150, 97, 51],
-        "Poco X5 Pro": [135, 134, 141, 146, 112, 103, 49],
-        "iPhone 12 Pro Max": [160, 146, 160, 164, 167, 147, 47],
-        "Redmi 10": [194, 193, 194, 167, 167, 147, 54],
-        "Galaxy A22": [119, 147, 147, 135, 137, 140, 52],
-        "Galaxy A51": [135, 134, 141, 146, 112, 103, 53],
-        "Redmi Note 11 Pro": [160, 146, 160, 164, 167, 147, 48],
-        "Galaxy A71": [148, 122, 124, 150, 150, 97, 51],
-        "Redmi Note 10": [185, 164, 185, 160, 167, 159, 51],
-        "Poco X3 NFC": [166, 162, 167, 167, 167, 143, 54],
-        "Galaxy A14": [141, 147, 147, 147, 167, 166, 52],
-        "Infinix Note 12": [184, 165, 168, 162, 141, 124, 48],
-        "Redmi 9": [119, 147, 147, 135, 137, 140, 56],
-        "Galaxy A10s": [194, 193, 194, 167, 167, 147, 61],
-        "Realme 8": [135, 134, 141, 146, 112, 103, 49],
-        "Galaxy A03s": [119, 147, 147, 135, 137, 140, 61],
-        "Redmi Note 9 Pro": [184, 165, 168, 162, 141, 124, 58],
-        "Galaxy A04": [141, 147, 147, 147, 167, 166, 53],
-        "Poco F4": [166, 162, 167, 167, 167, 143, 52],
-        "Galaxy A21s": [185, 164, 185, 160, 167, 159, 60],
-        "Redmi 10c": [148, 122, 124, 150, 150, 97, 54]
-    };
-
     const clanNames = ["ONLYㅤGOATSAㅤ??", "Only legend", "ONLYㅤGangㅤ??", "!ᴿᴱˣㅤBRAZIL", "ＩＱᅠ〆 T E A M", "AD | SUPER Primeﾠﾠ〆 28", "Z  𓆩KAFN𓆪 ˣ", "𓆩O N L Y𓆪 〆9 A L 3 T", "WOLF TENX", "ＪＯＲＤＡＮ", "ᵀᴵᴷ ヽᴘᴀ❀ɴᴇʟ", "ＧＳＧ〆IＲＡQ", "７Ｒ ＴＥＡＭ", "ᵀᵉᵃᵐツᎳᎪᏒᏒᎥᎾᏒ", "ᵀᵉᵃᵐ彡SHᎪDᎾᎳ", "ɢʜᴏsᴛ • ᴮᵁˢᵀᴱᴿ", "ʜᴇᴀʀᴛs乂ʙʀᴏᴋᴇɴ", "ᵀᵉᵃᵐ★Cobra", "ＴＨＵＧ々ＬＩＦ Ꭼ", "PH   LHOWAYA", "Ｏｎｌｙ ＳＡＧＯＭＳ", "ＳＡＧＯＭＳ", " Ｒ２　ＰＬＡＹＥＲ ❄︵²⁰", "X7 　ＰＬＡＹＥＲ", "O N L Y〆 T E A M모", " ᴘᴏʟɪᴄ ᴛᴇᴀᴍ ☂", "ＮＥＸＴＳＴＡＲＳ", "X! WARRING", "RD BALIRMO", "BLAK KLOVER"];
-
     const brazilianNames = ["DuXx Zz ?", "Zoom. 01x", "Universe FF?", "Junxor Zz ?", "Fars!ㅤZzㅤ?", "Jonaeid 01x", "Keplar 3x", "Universe NoXx", "! Hawa4. Pack", "⸙ Brxzz Zxt 모", "'mㅤnoT⸸k!g", "SancheZx! 모", "Z's DANGER", "Ꭾ!ꪎㅤZᴇʀᴏꪎㅤ¿?", "freestyleㅤ!?", "UɴκɴowɴㅤF!x", "Zzz Phobos №¹", "song name??", "Oolen San↑JI", "OnlyㅤM A T R I Xㅤ모", "Only Ziko", "XxㅤStyleㅤ¿?", "x7ㅤGareㅤZzz", "GX   R O N A L D O", "ＳＮＩＰＥＲ", "✿┋ AYMNEㅤꪆৎ", "『𝗩𝗜𝗣』 𝗕𝗥𝗔𝗭𝗜𝗟", "Ｓａｓｕｋｅ", "ɴᴇʏᴍᴀʀ", "ѕɴsㅤʟᴇᴀᴅᴇʀ", "God　CRIME　모", "ＴＲＹ　ＮＸＴ　ＴＩＭＥ", "OnlyㅤF!XA??", "T R E H A R D", "ᴴᵒˣㅤＬ７ａｊㅤ⁰⁹", "اوســ亗ــڪارR‿ˣ ✌︎", "ضـ﹏ــايعㅤ♪ㅤبدونك", "sᴏᴍʙʀᴀ☂ 1%", "فخرㅤღㅤحلب"];
-
-    const colorMap = [
-        { name: "أحمر", code: "FF0000", hex: "#FF0000" },
-        { name: "أزرق", code: "0000FF", hex: "#0000FF" },
-        { name: "أصفر", code: "FFFF00", hex: "#FFFF00" },
-        { name: "أبيض", code: "FFFFFF", hex: "#FFFFFF" }
-    ];
+    const colorMap = [{ name: "أحمر", code: "FF0000", hex: "#FF0000" }, { name: "أزرق", code: "0000FF", hex: "#0000FF" }, { name: "أصفر", code: "FFFF00", hex: "#FFFF00" }, { name: "أبيض", code: "FFFFFF", hex: "#FFFFFF" }];
 
     let colorMode = false;
 
@@ -318,5 +250,12 @@
             });
             botReply(bNamesHtml);
         } else if (val === "6") {
-            let dHtml = "اختر جهازك لعرض الحساسية:<br>";
-        
+            botReply("هذه الميزة قيد التطوير حالياً لتوفر أدق الحساسيات!");
+        } else {
+            botReply(`نتائج الزخرفة لـ "${val}":<br>${decorate(val)}`);
+        }
+    }
+</script>
+</body>
+</html>
+
