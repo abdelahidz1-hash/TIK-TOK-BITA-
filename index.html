@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ＢＯＴ ＺＡＫＲＡＦＡ - زخرفة وألوان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     
     <link rel="manifest" href="https://progressier.app/vII79ZQEel6BsSfkWNHK/progressier.json"/>
     <script defer src="https://progressier.app/vII79ZQEel6BsSfkWNHK/script.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --primary-color: #00f2ff;
@@ -27,6 +26,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color); display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 9999; font-family: 'Cairo', sans-serif;
+            transition: opacity 0.5s ease, visibility 0.5s;
         }
 
         .loader-header img { height: 250px; width: auto; object-fit: contain; margin-bottom: 20px; }
@@ -34,7 +34,7 @@
         .status-text { color: var(--primary-color); font-size: 0.9rem; font-weight: 900; }
         .progress-box { width: 100%; padding: 3px; background: rgba(255, 255, 255, 0.02); border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.05); }
         .progress-wrapper { width: 100%; height: 10px; background: #141414; border-radius: 50px; overflow: hidden; }
-        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #006ae6, var(--primary-color)); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #006ae6, var(--primary-color)); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); transition: width 0.2s ease-out; }
 
         #main-content {
             display: none; font-family: 'Cairo', sans-serif; 
@@ -45,16 +45,18 @@
         }
 
         .header { 
-            display: flex; align-items: center; justify-content: center; padding: 16px 20px; 
-            background: var(--surface); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 16px 20px; 
+            background: var(--surface); 
+            backdrop-filter: blur(10px); 
+            border-bottom: 1px solid var(--border);
             position: relative;
         }
-        
-        .search-link { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); width: 35px; height: 35px; cursor: pointer; }
-        .search-link img { width: 100%; height: 100%; filter: invert(1); }
 
-        .name { font-weight: 900; font-size: 1.1rem; color: #FF0000; }
-        
+        .name { font-weight: 900; font-size: 1.1rem; color: #FF0000; text-align: center; }
+
         .chat { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px; }
         .row { display: flex; align-items: flex-end; gap: 10px; animation: popIn .3s ease-out both; }
         @keyframes popIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -63,17 +65,13 @@
         .row.user { flex-direction: row-reverse; }
         .row.user .bubble { background: transparent; font-weight: 700; padding: 14px 0; }
 
-        .input-area { display: flex; gap: 12px; padding: 18px 20px; background: var(--surface); border-top: 1px solid var(--border); }
+        .input-area { display: flex; gap: 12px; padding: 18px 20px; background: var(--surface); backdrop-filter: blur(15px); border-top: 1px solid var(--border); }
         input#inp { flex: 1; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); border-radius: 16px; padding: 14px 20px; color: var(--text); outline: none; font-family: 'Cairo'; }
         .send-btn { width: 56px; height: 56px; border-radius: 16px; border: none; background: var(--orange); color: #fff; cursor: pointer; font-size: 1.2rem;}
 
-        .style-row { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .style-row span { font-size: 1rem; font-weight: bold; white-space: pre-wrap; font-family: sans-serif; }
-        .cp { width: 35px; height: 35px; border-radius: 8px; border: 1px solid var(--orange); background: transparent; cursor: pointer; padding: 5px; flex-shrink: 0; }
-        .cp img { width: 100%; height: 100%; filter: invert(47%) sepia(97%) saturate(2335%) hue-rotate(3deg); }
-        .cp.done { border-color: #2ECC71; }
+        .style-row { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); border-radius: 12px; padding: 10px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px; }
+        .style-row span { font-size: 1.1rem; font-weight: bold; white-space: pre-wrap; font-family: sans-serif; cursor: pointer; }
         
-        .symbol-btn { width: 42px; height: 42px; margin: 4px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--orange); color: var(--text); border-radius: 10px; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -91,9 +89,6 @@
 
     <div id="main-content">
         <div class="header">
-            <a href="#" class="search-link">
-                <img src="https://images.icon-icons.com/1511/PNG/96/searchsymbolinblackcircularbutton_104758.png" alt="Search">
-            </a>
             <div class="name">ＢＯＴ ＺＡＫＲＡＦＡ</div>
         </div>
         <div class="chat" id="chat"></div>
@@ -114,13 +109,15 @@
         const interval = setInterval(() => {
             progress += Math.floor(Math.random() * 5) + 2; 
             if (progress > 100) progress = 100;
+            
             percentElement.innerText = `${progress}%`;
             progressBar.style.width = `${progress}%`;
 
             if (progress === 100) {
                 clearInterval(interval);
                 setTimeout(() => {
-                    loader.style.display = 'none';
+                    loader.style.opacity = '0';
+                    loader.style.visibility = 'hidden';
                     main.style.display = 'flex';
                     showWelcome();
                 }, 500);
@@ -130,19 +127,30 @@
 
     const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     const maps = [
-        "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳",
-        "𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝗠𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶𝗷𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘇",
+        "𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳",
+        "𝗔𝗕𝗖𝗗𝗘𝗙𝗚𝗛𝗜𝗝𝗞𝗟𝐌𝗡𝗢𝗣𝗤𝗥𝗦𝗧𝗨𝗩𝗪𝗫𝗬𝗭𝗮𝗯𝗰𝗱𝗲𝗳𝗴𝗵𝗶ජ𝗸𝗹𝗺𝗻𝗼𝗽𝗾𝗿𝘀𝘁𝘂𝘃𝘄𝘅𝘆𝘻",
         "𝑨𝑩𝑪𝑫𝑬𝑭𝑮𝑯𝑰𝑱𝑲𝑳𝑴𝑵𝑶𝑷𝑸𝑹𝑺𝑻𝑼𝑽𝑾𝑿𝒀𝒁𝒂𝒃𝒄𝒅𝒆𝒇𝒈𝒉𝒊𝒋𝒌𝒍𝒎𝒏𝒐𝒑𝒒𝒓𝒔𝒕𝒖𝒗𝒘𝒙𝒚𝒛",
         "ⒶⒷⒸⒹⒺⒻⒼⒽⒾⒿⓀⓁⓂⓃⓄⓅⓆⓇⓈⓉⓊⓋⓌⓍⓎⓏⓐⓑⓒⓓⓔⓕⓖⓗⓘⓙⓚⓛⓜⓝⓞⓟⓠⓡⓢⓣⓤⓥⓦⓧⓨⓩ",
-        "𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕎𝕏𝕐ℤ𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫",
-        "ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ"
+        "ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ",
+        "𝒜ℬ𝒞𝒟ℰℱ𝒢ℋℐ𝒥𝒦ℒℳ𝒩𝒪𝒫𝒬ℛ𝒮𝒯𝒰𝒱𝒲𝒳𝒴𝒵𝒶𝒷𝒸𝒹ℯ𝒻ℊ𝒽𝒾𝒿𝓀𝓁𝓂𝓃ℴ𝓅𝓆𝓇𝓈𝓉𝓊𝓋𝓌𝓍𝓎𝓏",
+        "𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝒁𝓪𝓫𝓬𝓭𝓮𓅿𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓋𝔀𝓍𝔂𝓏",
+        "𝐴𝐵𝐶𝐷𝐸𝐹𝐺𝐻𝐼𝐽𝐾𝐿𝑀𝑁𝑂𝑃𝑄𝑅𝑆𝑇𝑈𝑉𝑊𝑋𝑌𝑍𝑎𝑏𝑐𝑑𝑒𝑓𝑔ℎ𝑖𝑗𝑘𝑙𝑚𝑛𝑜𝑝𝑞𝑟𝑠𝑡𝑢𝑣𝑤𝑥𝑦𝑧",
+        "𝘈𝘉𝘊𝘋𝘌𝘍𝘎𝘏𝘐𝘑𝘒𝘓𝘔𝘕𝘖𝘗𝘘𝘙𝘚𝘛𝘜𝘝𝘞𝘟𝘠𝘡𝘢𝘣𝘤𝘥𝘦實𝘧𝘨𝘩𝘪𝘫𝘬𝘭𝘮𝘯𝘰𝘱𝘲𝘳𝘴𝘵𝘶𝘷𝘸𝘅𝘺𝘻",
+        "𝖠𝖡𝖢𝖣𝖤𝖥𝖦𝖧𝖨𝖩𝖪𝖫𝖬𝖭𝖮𝖯𝖰𝖱𝖲𝖳𝖴𝖵𝖶𝖷𝖸𝖹𝖺𝖻𝖼𝖽𝖾𝖿𝗀𝗁𝗂𝗃𝗄𝗅𝗆𝗇𝗈𝗉𝗊𝗋𝗌𝗍𝗎𝗏𝗐𝗑𝗒𝗓",
+        "𝙰𝙱𝙲𝙳𝙴ＦＧＨＩ𝙹𝙺𝙻𝙼ＮＯＰ𝚀𝚁ＳＴＵＶＷＸＹＺ𝚊𝚋𝚌𝚍𝚎𝚏𝚐𝚑𝚒𝚓𝚔🇱🇲𝚗𝚘𝚙𝚚𝚛𝚜𝚝𝚞𝚟𝚠𝚡𝚢𝚣",
+        "🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉🄰🄱🄲🄳🄴🄵🄶🄷🄸🄹🄺🄻🄼🄽🄾🄿🅀🅁🅂🅃🅄🅅🅆🅇🅈🅉",
+        "🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉🅰🅱🅲🅳🅴🅵🅶🅷🅸🅹🅺🅻🅼🅽🅾🅿🆀🆁🆂🆃🆄🆅🆆🆇🆈🆉",
+        "ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᑫᴿˢᵀᵁⱽᵂˣʸᶻᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖᑫʳˢᵗᵘᵛʷˣʸᶻ",
+        "ᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢᴀʙᴄᴅᴇғɢʜɪᴊᴋʟᴍɴᴏᴘǫʀsᴛᴜᴠᴡxʏᴢ",
+        "𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷",
+        "𝖆𝖇𝖈𝖉𝖊𝖋𝖌𝖍𝖎𝖏𝖐𝖑𝖒𝖓𝖔𝖕𝖖𝖗𝖘𝖙𝖚𝖛𝖜𝖝𝖞𝖟"
     ];
 
+    const symbols = "☠☂☃☁☼❆♨✎✏❤︎♨︎☏✆✇☸✿❀ꨄ︎𖣂☕︎ッ❀࿐★↳↱⇢➯↝➸➹↬↫￫➥—─ー〜〰⁓∼ೄྀ࿐ˊˎ-✿⩇⩉ꐑ𖣯⌕ᨒᯤᯅ𖤘𖥦⏃%𓍯𔗫𔖲𓂃﹆﹅𓄼𓄹᭣꧞𓏲𓂅꣼࿓࿔༄⌗𓈒⊹𖥔ᨵꑘᜊᦒଘ◖◗𖠗ꗃ٩ะ≛߸𖡡𝆺𝅥꩜𖣠𖦹❤︎♥︎𔘓♡ᥫ᭡✶𖤐★𒀭𑁍ꕤ❑❒!i！？!!﹗⦂𓈃𓄲𓄴𓈀𓊔❝❞❛❜୨୧‣›⌫✧✦⭒✓✘𓈈ᚙ⩨▚₆⁶₆ஃ⿴⿻ꭑ᧑𐐫𝗈︩︪꒰꒱ʚɞ⌨︎⚠︎☻✰❏";
     const blankNames = ["ㅤ", "ㅤㅤ", "ㅤㅤㅤ", "ㅤㅤㅤㅤ"];
-    const symbols = "☠☂☃☁☼❆♨✎✏❤︎ッ❀࿐★↳↱⇢➯↝➸➹↬↫￫➥—─ー〜〰⩇⩉ꐑ𖣯⌕ᨒᯤᯅ𖤘𖥦⏃%𓍯𔗫𔖲𓂃﹆﹅𓄼𓄹᭣꧞𓏲𓂅꣼࿓࿔༄⌗𓈒⊹𖥔ᨵꑘᜊᦒଘ◖◗𖠗ꗃ٩ะ≛";
-    const clanNames = ["ONLYㅤGOATSAㅤ??", "Only legend", "ONLYㅤGangㅤ??", "ＧＳＧ〆IＲＡQ", "７Ｒ ＴＥＡＭ"];
-    const brazilianNames = ["DuXx Zz ?", "Zoom. 01x", "Universe FF?", "Junxor Zz ?"];
-    const colorMap = [{ name: "أحمر", code: "FF0000", hex: "#FF0000" }, { name: "أزرق", code: "0000FF", hex: "#0000FF" }, { name: "أصفر", code: "FFFF00", hex: "#FFFF00" }];
+    const clanNames = ["ONLYㅤGOATSAㅤ??", "Only legend", "ONLYㅤGangㅤ??", "!ᴿᴱˣㅤBRAZIL", "ＩＱᅠ〆 T E A M", "Z  𓆩KAFN𓆪 ˣ", "WOLF TENX", "ＪＯＲＤＡＮ", "ᵀᴵᴷ ヽᴘᴀ❀ɴᴇʟ", "ＧＳＧ〆IＲＡQ", "７Ｒ ＴＥＡＭ"];
+    const brazilianNames = ["DuXx Zz ?", "Zoom. 01x", "Universe FF?", "Junxor Zz ?", "Fars!ㅤZzㅤ?", "Jonaeid 01x", "Keplar 3x", "Universe NoXx", "SancheZx! 모", "Z's DANGER", "Ꭾ!ꪎㅤZᴇʀᴏꪎㅤ¿?", "freestyleㅤ!?", "Zzz Phobos №¹", "Only Ziko"];
+    const colorMap = [{ name: "أحمر", hex: "#FF0000" }, { name: "أزرق", hex: "#0000FF" }, { name: "أصفر", hex: "#FFFF00" }, { name: "أبيض", hex: "#FFFFFF" }];
 
     let colorMode = false;
 
@@ -153,11 +161,11 @@
             let mArr = Array.from(m);
             for (let char of text) {
                 let idx = alpha.indexOf(char);
-                if (idx > -1) { res += mArr[idx]; }
-                else if (alpha.indexOf(char.toUpperCase()) > -1) { res += mArr[alpha.indexOf(char.toUpperCase())]; }
+                if (idx > -1) { res += mArr[idx] || char; }
+                else if (alpha.indexOf(char.toUpperCase()) > -1) { res += mArr[alpha.indexOf(char.toUpperCase())] || char; }
                 else { res += char; }
             }
-            out += `<div class="style-row"><span>${res}</span><button class="cp" onclick="cp('${res}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`;
+            out += `<div class="style-row"><span>${res}</span></div>`;
         });
         return out;
     }
@@ -165,17 +173,9 @@
     function colorize(text) {
         let out = "";
         colorMap.forEach(c => {
-            let fullCopy = `[${c.code}]${text}`;
-            out += `<div class="style-row"><span style="color:${c.hex}">${text}</span><button class="cp" onclick="cp('${fullCopy}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`;
+            out += `<div class="style-row"><span style="color:${c.hex}">${text}</span></div>`;
         });
         return out;
-    }
-
-    function cp(text, btn) { 
-        navigator.clipboard.writeText(text).then(() => { 
-            btn.classList.add("done"); 
-            setTimeout(() => btn.classList.remove("done"), 1000); 
-        }); 
     }
 
     function botReply(html) { 
@@ -188,7 +188,14 @@
     }
 
     function showWelcome() {
-        botReply(`اهلا بك في ＢＯＴ ＺＡＫＲＡＦＡ ✨<br>اكتب اسمك لزخرفته أو اختر من القائمة:<br>1 - اسم فارغ<br>2 - رموز مميزة<br>3 - تلوين الإسم<br>4 - أسماء كلانات<br>5 - أسماء برازيلية`);
+        botReply(`اهلا بك في ＢＯＴ ＺＡＫＲＡＦＡ ✨<br>
+        اكتب اسمك لزخرفته<br>
+        1 - اسم فارغ<br>
+        2 - رموز مميزة<br>
+        3 - تلوين الإسم<br>
+        4 - أسماء كلانات<br>
+        5 - أسماء برازيلية<br>
+        6 - حساسية حسب الجهاز`);
     }
 
     function send() {
@@ -201,34 +208,34 @@
         inp.value = "";
 
         if (colorMode) {
-            botReply(`نتائج التلوين لـ "${val}":<br>${colorize(val)}`);
+            botReply(`نتائج تلوين الاسم لـ "${val}":<br>${colorize(val)}`);
             colorMode = false;
             inp.placeholder = "اكتب اسمك أو رقم الخيار...";
         } else if(val === "1") {
-            let bHtml = "الأسماء الفارغة:<br>";
-            blankNames.forEach(b => bHtml += `<div class="style-row"><span>${b}</span><button class="cp" onclick="cp('${b}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`);
+            let bHtml = "الأسماء الفارغة المتاحة:<br>";
+            blankNames.forEach((b) => { bHtml += `<div class="style-row"><span>${b}</span></div>`; });
             botReply(bHtml);
         } else if (val === "2") {
-            let sHtml = '<div style="display: flex; flex-wrap: wrap;">';
-            Array.from(symbols).forEach(s => sHtml += `<button class="symbol-btn" onclick="cp('${s}', this)">${s}</button>`);
-            botReply("الرموز المميزة:<br>" + sHtml + '</div>');
+            botReply("الرموز المميزة المتاحة:<br><div class='style-row' style='word-break: break-all;'><span>" + symbols + "</span></div>");
         } else if (val === "3") {
             botReply("أرسل الاسم الذي تريد تلوينه الآن 🎨");
             colorMode = true;
             inp.placeholder = "أدخل الاسم هنا...";
         } else if (val === "4") {
-            let cHtml = "أسماء كلانات:<br>";
-            clanNames.forEach(n => cHtml += `<div class="style-row"><span>${n}</span><button class="cp" onclick="cp('${n}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`);
+            let cHtml = "أقوى أسماء الكلانات المقترحة:<br>";
+            clanNames.forEach(n => { cHtml += `<div class="style-row"><span>${n}</span></div>`; });
             botReply(cHtml);
         } else if (val === "5") {
-            let bNamesHtml = "أسماء برازيلية:<br>";
-            brazilianNames.forEach(n => bNamesHtml += `<div class="style-row"><span>${n}</span><button class="cp" onclick="cp('${n}', this)"><img src="https://cdn-icons-png.flaticon.com/128/9238/9238938.png"></button></div>`);
+            let bNamesHtml = "أسماء برازيلية احترافية:<br>";
+            brazilianNames.forEach(n => { bNamesHtml += `<div class="style-row"><span>${n}</span></div>`; });
             botReply(bNamesHtml);
+        } else if (val === "6") {
+            botReply("هذه الميزة قيد التطوير حالياً!");
         } else {
             botReply(`نتائج الزخرفة لـ "${val}":<br>${decorate(val)}`);
         }
     }
 </script>
 </body>
-    </html>
-    
+                </html>
+        
